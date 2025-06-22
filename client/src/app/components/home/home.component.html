@@ -1,0 +1,84 @@
+<div class="landing-wrapper d-flex align-items-center justify-content-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-10 col-lg-10 text-center landing-card p-5 animate-fade-in-up">
+
+        <!-- App Icon -->
+        <div class="app-icon mb-4">
+          <div class="icon-circle bg-warning text-dark">
+            <i class="fas fa-bolt fa-lg"></i>
+          </div>
+        </div>
+
+        <!-- App Title -->
+        <h1 class="fw-bold display-4 text-white mb-3 brand-glow">
+          Welcome to <span class="brand-name">Quantivio</span>
+        </h1>
+        <p class="lead text-white-50 mb-4">
+          Simplify your workflow. Plan, collaborate, and execute effortlessly.
+        </p>
+
+        <!-- Buttons -->
+        <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mb-4">
+          <a *ngIf="!authStatus && !userObject" class="btn btn-glow px-4 py-2" [routerLink]="['/register-admin']">
+            <i class="fas fa-user-plus me-2"></i> Register
+          </a>
+          <a *ngIf="!authStatus && !userObject" class="btn btn-outline-light px-4 py-2" [routerLink]="['/login']">
+            <i class="fas fa-sign-in-alt me-2"></i> Login
+          </a>
+          <a *ngIf="authStatus && userObject" class="btn btn-glow px-4 py-2" [routerLink]="['/dashboard']">
+            <i class="fas fa-columns me-2"></i> Dashboard
+          </a>
+        </div>
+
+        <!-- Feature Grid -->
+        <div class="row text-start text-white-50 g-4 mt-4 features">
+          <div class="col-md-6 d-flex align-items-start fade-in-delay">
+            <div class="icon-circle-sm bg-info text-white me-3">
+              <i class="fas fa-users-cog"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 text-white">Team Collaboration</h6>
+              <p class="mb-0">Role-based access and live progress updates.</p>
+            </div>
+          </div>
+
+          <div class="col-md-6 d-flex align-items-start fade-in-delay" style="animation-delay: 0.2s">
+            <div class="icon-circle-sm bg-success text-white me-3">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 text-white">Project Planning</h6>
+              <p class="mb-0">Visual timelines, milestones, and roadmaps.</p>
+            </div>
+          </div>
+
+          <div class="col-md-6 d-flex align-items-start fade-in-delay" style="animation-delay: 0.4s">
+            <div class="icon-circle-sm bg-warning text-white me-3">
+              <i class="fas fa-tasks"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 text-white">Smart Tasking</h6>
+              <p class="mb-0">Assign, prioritize, and complete with ease.</p>
+            </div>
+          </div>
+
+          <div class="col-md-6 d-flex align-items-start fade-in-delay" style="animation-delay: 0.6s">
+            <div class="icon-circle-sm bg-danger text-white me-3">
+              <i class="fas fa-bell"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 text-white">Real-Time Alerts</h6>
+              <p class="mb-0">Stay informed and never miss an update.</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-5 small text-white-50">
+          Already invited? Use your email to log in and join your team.
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>

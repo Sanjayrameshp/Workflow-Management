@@ -1,0 +1,102 @@
+/* Fade-in animation */
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Card base */
+.profile-card {
+  background-color: #f9f7fc;
+  border-left: 6px solid #3a264f;
+  border-radius: 1rem;
+}
+
+/* Gradient header */
+.card-header.bg-gradient {
+  background: linear-gradient(to right, #3a264f, #1a2538);
+  padding: 1rem 1.5rem;
+}
+
+/* Section headings */
+.section-title {
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+/* Project title */
+.project-title {
+  color: #1a2538;
+  font-weight: 600;
+}
+
+/* Icon color */
+.icon-style {
+  color: #1a2538;
+  transition: color 0.2s ease-in-out;
+}
+
+.icon-style:hover {
+  color: #0d6efd;
+}
+
+/* Project card */
+.project-card {
+  background-color: #f8f9fa;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 0.75rem;
+  color: #000;
+}
+
+.project-card.animate-hover:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Dynamic badge colors */
+.status-badge {
+  font-size: 0.75rem;
+  border-radius: 0.25rem;
+  letter-spacing: 0.5px;
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.status-active {
+  background-color: #198754;
+}
+
+.status-completed {
+  background-color: #0d6efd;
+}
+
+.status-cancelled {
+  background-color: #dc3545;
+}
+
+.status-onhold {
+  background-color: #ffc107;
+  color: #000;
+}
+
+/* Text colors */
+.profile-card p {
+  color: #000;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+
+.view-btn {
+    float: right;
+    color: #ffffff;
+    padding: 8px 30px;
+    background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+    margin-bottom: 10px;
+}
+.text-gra {
+    color: #ffffff;
+}

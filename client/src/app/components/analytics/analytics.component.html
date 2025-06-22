@@ -1,0 +1,142 @@
+<div class="container py-4">
+  <div class="row mb-3">
+      <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
+    </div>
+  <!-- select Users  -->
+   <div class="row" *ngIf="userObject && userObject.role === 'admin'">
+    <div class="col-md-6 mb-3">
+      <label class="form-label" style="color: #ffffff;">User Name</label>
+      <select  class="form-select" [(ngModel)]="selectedUserId">
+        <option *ngFor="let user of selectedUsersList" [value]="user._id" (click)="getAllTasksByUser()">{{user.firstname}}&nbsp;{{user.lastname}}&nbsp;({{user.email}})</option>
+      </select>
+    </div>
+    <div class="col-md-6 mb-3 pdf-btn">
+      <button class="btn btn-primary analytics-btn" (click)="generatePdf()">
+          <i class="fa-solid fa-chart-simple"></i> Generate PDF
+        </button>
+    </div>
+   </div>
+  <!-- User Details Card -->
+  <div class="card shadow-sm mb-4 border-0 rounded-4 p-3 animate__animated animate__fadeIn">
+    <h4 class="mb-2">User Details</h4>
+    <div class="row">
+      <div class="col-md-4"><strong>Name:</strong> {{ selectedUser?.firstname }} {{ selectedUser?.lastname }}</div>
+      <div class="col-md-4"><strong>Email:</strong> {{ selectedUser?.email }}</div>
+      <div class="col-md-4"><strong>Role:</strong> {{ selectedUser?.role }}</div>
+    </div>
+  </div>
+
+  <!-- Task Summary Card -->
+<div class="card shadow-sm mb-4 border-0 rounded-4 p-3 animate__animated animate__fadeInUp">
+  <h4 class="mb-3">Task Summary</h4>
+  <div class="row text-center">
+    <div class="col-md-3 mb-2">
+      <div class="bg-light p-3 rounded-3">
+        <h6 class="text-muted">Total Tasks</h6>
+        <div class="h5 fw-bold">{{ getTotalTasks() }}</div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-2" *ngFor="let status of tasksByStatus">
+      <div class="bg-info text-white p-3 rounded-3">
+        <h6 class="text-uppercase">{{ status._id }}</h6>
+        <div class="h5 fw-bold">{{ status.count }}</div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-2" *ngFor="let priority of tasksByPriority">
+      <div class="bg-warning text-dark p-3 rounded-3">
+        <h6 class="text-capitalize">Priority: {{ priority._id }}</h6>
+        <div class="h5 fw-bold">{{ priority.count }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm mt-4 border-0 rounded-4 animate__animated animate__fadeInUp">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">All Tasks</h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Progress</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of allTasks; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ task.title }}</td>
+          <td><span class="badge bg-info text-dark">{{ task.status }}</span></td>
+          <td><span class="badge bg-warning text-dark">{{ task.priority }}</span></td>
+          <td>{{ task.progress }}%</td>
+          <td>{{ task.startDate | date:'shortDate' }}</td>
+          <td>{{ task.endDate | date:'shortDate' }}</td>
+        </tr>
+        <tr *ngIf="allTasks.length === 0">
+          <td colspan="7" class="text-center text-muted">No tasks found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+  <!-- Charts Section -->
+    <!-- Tasks by Status -->
+    <div class="row chart-center">
+        <div class="col-md-4" *ngIf="statusChartData.labels?.length; else noStatusData">
+      <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
+        <h5 class="text-center mb-3">Tasks by Status</h5>
+        <canvas baseChart [data]="statusChartData" [type]="statusChartType" [width]="400" [height]="200"></canvas>
+      </div>
+    </div>
+    <ng-template #noStatusData>
+      <div class="col-md-4 text-center fallback-box">No status data found</div>
+    </ng-template>
+
+    <!-- Tasks by Progress -->
+    <div class="col-md-4" *ngIf="progressChartData.labels?.length; else noProgressData">
+      <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
+        <h5 class="text-center mb-3">Tasks by Progress</h5>
+        <canvas baseChart [data]="progressChartData" [type]="progressChartType" [width]="400" [height]="200"></canvas>
+      </div>
+    </div>
+    <ng-template #noProgressData>
+      <div class="col-md-4 text-center fallback-box">No progress data found</div>
+    </ng-template>
+
+    <div class="col-md-4" *ngIf="priorityChartData.labels?.length; else noPriorityData">
+      <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
+        <h5 class="text-center mb-3">Tasks by Priority</h5>
+        <canvas baseChart [data]="priorityChartData" [type]="priorityChartType" [width]="400" [height]="200"></canvas>
+      </div>
+    </div>
+    <ng-template #noPriorityData>
+      <div class="col-md-4 text-center fallback-box">No priority data found</div>
+    </ng-template>
+    </div>
+
+    <!-- Tasks by Priority -->
+    <div class="row chart-center" style="margin-top: 20px;">
+
+    <!-- Tasks by Month -->
+    <div class="col-md-4" *ngIf="monthChartData.labels?.length; else noMonthData">
+      <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
+        <h5 class="text-center mb-3">Tasks by Month</h5>
+        <canvas baseChart [data]="monthChartData" [type]="monthChartType" [width]="400" [height]="200"></canvas>
+      </div>
+    </div>
+    <ng-template #noMonthData>
+      <div class="col-md-4 text-center fallback-box">No month data found</div>
+    </ng-template>
+    </div>
+
+
+
+</div>

@@ -1,0 +1,125 @@
+.gradient-header {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  animation: fadeIn 1s ease-in-out;
+}
+
+.gradient-btn {
+  background: linear-gradient(120deg, #ff4d4f, #ff416c);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 0.3rem;
+}
+
+.gradient-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255, 77, 79, 0.5);
+}
+
+.project-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Common Confirm Modal Styles */
+.modal-confirm .modal-content {
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: none;
+  background-color: #ffffff;
+}
+
+/* Gradient Header for Delete */
+#confirmDeleteUserModal .modal-header {
+  background: linear-gradient(120deg, #ef4444, #f97316, #fb923c);
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+/* Gradient Header for Remove */
+#confirmRemoveProjectModal .modal-header {
+  background: linear-gradient(120deg, #facc15, #fbbf24, #fcd34d);
+  color: #1f2937;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+/* Modal Title */
+.modal-confirm .modal-title {
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+/* Modal Body */
+.modal-confirm .modal-body {
+  background-color: #f9fafb;
+  padding: 2rem;
+  font-size: 1rem;
+  color: #374151;
+}
+
+/* Modal Footer */
+.modal-confirm .modal-footer {
+  background-color: #f1f5f9;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 1rem 1.5rem;
+}
+
+/* Buttons */
+.modal-confirm .btn-danger,
+.modal-confirm .btn-warning {
+  border-radius: 8px;
+  border: none;
+  color: white;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.modal-confirm .btn-danger {
+  background: linear-gradient(120deg, #ef4444, #f97316, #fb923c);
+}
+
+.modal-confirm .btn-danger:hover {
+  background: linear-gradient(120deg, #dc2626, #ea580c, #f97316);
+}
+
+.modal-confirm .btn-warning {
+  background: linear-gradient(120deg, #facc15, #fbbf24, #fcd34d);
+  color: #1f2937;
+}
+
+.modal-confirm .btn-warning:hover {
+  background: linear-gradient(120deg, #eab308, #f59e0b, #fbbf24);
+}
+
+.modal-confirm .btn-secondary {
+  border-radius: 8px;
+  background-color: #e5e7eb;
+  color: #374151;
+  border: none;
+}
+
+/* Fade animation */
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
+}

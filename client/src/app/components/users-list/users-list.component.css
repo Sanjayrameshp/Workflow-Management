@@ -1,0 +1,47 @@
+/* Gradient header style */
+.gradient-header {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Table and header formatting */
+.card-header h4 {
+  font-weight: 600;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+ul {
+  padding-left: 1rem;
+  margin-bottom: 0;
+}
+
+/* View button styling */
+.view-btn {
+  border-radius: 5px;
+  padding: 4px 20px;
+  color: #ffffff;
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.view-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(156, 63, 243, 0.4);
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

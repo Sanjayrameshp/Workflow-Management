@@ -1,0 +1,66 @@
+.app-header {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f3f4f6;
+  font-family: 'Segoe UI', sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+}
+
+.app-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #facc15;
+}
+
+.btn-outline-light:hover {
+  color: #fff;
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .app-title {
+    font-size: 1.2rem;
+  }
+
+  .logo-img {
+    height: 32px;
+  }
+
+  .btn {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+  }
+}
+
+.auth-wrapper a,
+.auth-wrapper button {
+  transition: all 0.3s ease;
+}
+
+.auth-wrapper a:hover,
+.auth-wrapper .dropdown-item:hover {
+  transform: translateY(-1px);
+  background-color: #f8f9fa;
+}
+
+.dropdown-menu {
+  min-width: 200px;
+}
+
+.logo-section {
+  cursor: pointer;
+}
+
+.dropdown-item {
+  cursor: pointer;
+}

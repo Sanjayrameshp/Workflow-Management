@@ -1,0 +1,111 @@
+/* === Background === */
+.landing-wrapper {
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #3b82f6, #9333ea, #ec4899);
+  background-size: 400% 400%;
+  animation: backgroundGradient 25s ease infinite;
+}
+
+/* === Landing Card === */
+.landing-card {
+  background: rgba(17, 24, 39, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+  border-radius: 2rem;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* === App Icon === */
+.icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+/* === Feature Icons === */
+.icon-circle-sm {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+/* === Buttons === */
+.btn-glow {
+  background: linear-gradient(120deg, #0ea5e9, #8b5cf6);
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.5);
+}
+
+.btn-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.7);
+}
+
+.btn-outline-light {
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* === Branding Text === */
+.brand-glow {
+  color: #facc15;
+  text-shadow: 0 0 12px #facc15;
+}
+
+/* === Animations === */
+@keyframes backgroundGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease-out both;
+}
+
+.fade-in-delay {
+  animation: fadeInUp 0.8s ease-out both;
+  opacity: 0;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .landing-card {
+    padding: 2rem;
+  }
+}

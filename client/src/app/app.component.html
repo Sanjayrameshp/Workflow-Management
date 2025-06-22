@@ -1,0 +1,21 @@
+<div class="loading-overlay" *ngIf="isLoading()">
+  <i class="pi pi-spin pi-spinner" style="font-size: 3rem; color: white;"></i>
+</div>
+<p-messages class="message" [value]="messages()" />
+<div class="container-fluid main-body">
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <app-header></app-header>
+    </div>
+  </div>
+  <div class="row content-section">
+    <div class="col-md-12 col-sm-12">
+      <router-outlet />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>

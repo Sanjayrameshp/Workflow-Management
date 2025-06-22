@@ -1,0 +1,401 @@
+.highlight-animation {
+  animation: pulseHighlight 2s infinite;
+  font-weight: bold;
+}
+
+@keyframes pulseHighlight {
+  0% {
+    color: #fa7a7a;
+    /* background-color: transparent; */
+  }
+  25% {
+    color: #f64f4f;
+    /* background-color: #007bff; */
+  }
+  50% {
+    color: #e43b3b;
+    /* background-color: #ffc107; */
+  }
+  75% {
+    color: #f56262;
+    /* background-color: #28a745; */
+  }
+  100% {
+    color: #fb8282;
+    /* background-color: transparent; */
+  }
+}
+
+#inviteUserModal .modal-content {
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: none;
+  background-color: #ffffff;
+}
+
+/* Header with gradient */
+#inviteUserModal .modal-header {
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+/* Title styling */
+#inviteUserModal .modal-title {
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+/* Modal body background */
+#inviteUserModal .modal-body {
+  background-color: #f9fafb;
+  padding: 2rem;
+}
+
+/* Footer background */
+#inviteUserModal .modal-footer {
+  background-color: #f1f5f9;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 1rem 1.5rem;
+}
+
+/* Labels */
+#inviteUserModal .form-label {
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Input fields */
+#inviteUserModal .form-control {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#inviteUserModal .form-control:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 0.1rem rgba(168, 85, 247, 0.25);
+}
+
+/* Primary button */
+#inviteUserModal .btn-primary {
+  border-radius: 8px;
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  border: none;
+  color: white;
+  transition: background 0.3s ease;
+}
+
+#inviteUserModal .btn-primary:hover {
+  background: linear-gradient(120deg, #2563eb, #9333ea, #a855f7);
+}
+
+/* Secondary (Cancel) button */
+#inviteUserModal .btn-secondary {
+  border-radius: 8px;
+  background-color: #e5e7eb;
+  color: #374151;
+  border: none;
+}
+
+/* Validation message */
+#inviteUserModal .text-danger {
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.btn-section .btn:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Shared button styles */
+.btn-section .btn {
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0.5rem 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  font-size: 0.95rem;
+}
+
+/* Invite People - Outline Primary */
+.btn-section .btn-outline-primary {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  color: #fff;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.btn-section .btn-outline-primary:hover {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  box-shadow: 0 8px 20px rgba(156, 63, 243, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Create Task - Solid Gradient */
+.btn-section .btn-primary {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  color: #fff;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.btn-section .btn-primary:hover {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  box-shadow: 0 8px 20px rgba(156, 63, 243, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Optional icon margin */
+.btn-section .btn i {
+  font-size: 1rem;
+  margin-right: 0.4rem;
+}
+
+
+/* Modal container */
+#createTaskModal .modal-content {
+  border-radius: 15px;
+  border: none;
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal header with gradient */
+#createTaskModal .modal-header {
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  color: #ffffff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+/* Modal title */
+#createTaskModal .modal-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+/* Modal body */
+#createTaskModal .modal-body {
+  background-color: #f9fafb;
+  padding: 2rem;
+}
+
+/* Modal footer */
+#createTaskModal .modal-footer {
+  background-color: #f1f5f9;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 1rem 1.5rem;
+}
+
+/* Form Labels */
+#createTaskModal .form-label {
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Inputs and selects */
+#createTaskModal .form-control,
+#createTaskModal .form-select {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#createTaskModal .form-control:focus,
+#createTaskModal .form-select:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 0.1rem rgba(168, 85, 247, 0.25);
+}
+
+/* Error text */
+#createTaskModal .text-danger {
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Buttons */
+#createTaskModal .btn {
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease-in-out;
+}
+
+#createTaskModal .btn-primary {
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  color: white;
+  border: none;
+}
+
+#createTaskModal .btn-primary:hover {
+  background: linear-gradient(120deg, #2563eb, #9333ea, #a855f7);
+}
+
+#createTaskModal .btn-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+  border: none;
+}
+
+#createTaskModal .btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+.project-details-box {
+  background-color: #fff;
+  border-left: 6px solid #9c3ff3;
+  border-radius: 8px;
+}
+
+.project-badge {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.table .btn-outline-primary {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  color: white;
+  border: none;
+}
+
+.table .btn-outline-primary:hover {
+  box-shadow: 0 4px 12px rgba(156, 63, 243, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-edit-project {
+  background: linear-gradient(120deg, #6f42c1, #9c3ff3);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+}
+
+.btn-delete-project {
+  background: linear-gradient(120deg, #d32f2f, #f44336);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+}
+
+.btn-edit-project:hover,
+.btn-delete-project:hover {
+  opacity: 0.9;
+}
+.project-details-box {
+  background: linear-gradient(to right, #3a264f, #1a2538); /* soft blue-purple */
+  border-left: 6px solid #9c3ff3;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+
+.status-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+#editProjectModal .modal-content {
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: none;
+  background-color: #ffffff;
+}
+
+/* Header with gradient */
+#editProjectModal .modal-header {
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+/* Title styling */
+#editProjectModal .modal-title {
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+/* Modal body background */
+#editProjectModal .modal-body {
+  background-color: #f9fafb;
+  padding: 2rem;
+}
+
+/* Footer background */
+#editProjectModal .modal-footer {
+  background-color: #f1f5f9;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 1rem 1.5rem;
+}
+
+/* Labels */
+#editProjectModal .form-label {
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Input fields */
+#editProjectModal .form-control,
+#editProjectModal .form-select {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#editProjectModal .form-control:focus,
+#editProjectModal .form-select:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 0.1rem rgba(168, 85, 247, 0.25);
+}
+
+/* Primary button */
+#editProjectModal .btn-primary {
+  border-radius: 8px;
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  border: none;
+  color: white;
+  transition: background 0.3s ease;
+}
+
+#editProjectModal .btn-primary:hover {
+  background: linear-gradient(120deg, #2563eb, #9333ea, #a855f7);
+}
+
+/* Secondary (Cancel) button */
+#editProjectModal .btn-secondary {
+  border-radius: 8px;
+  background-color: #e5e7eb;
+  color: #374151;
+  border: none;
+}
+
+.analytics-btn {
+  padding-left: 50px !important;
+  padding-right: 50px !important;
+}

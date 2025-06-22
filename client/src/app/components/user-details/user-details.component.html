@@ -1,0 +1,133 @@
+<div class="container py-5" *ngIf="userData; else noUser">
+  <div class="row mb-3">
+      <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
+    </div>
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+    <!-- Header with Gradient -->
+    <div class="card-header text-white gradient-header py-4">
+      <h3 class="mb-0">👤 User Details</h3>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body px-5 py-4 bg-light">
+      <div class="row g-4">
+
+        <div class="col-md-6">
+          <label class="form-label text-muted">Full Name</label>
+          <div class="fs-5 fw-semibold">{{ userData.firstname }} {{ userData.lastname }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-muted">Email</label>
+          <div class="fs-6">{{ userData.email }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-muted">Phone</label>
+          <div>{{ userData.phone }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-muted">Role</label>
+          <div class="text-capitalize">{{ userData.role }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-muted">Organization</label>
+          <div>{{ userData.organization?.name || 'N/A' }}</div>
+        </div>
+
+        <!-- Projects -->
+        <div class="col-md-12">
+          <label class="form-label text-muted">Projects</label>
+
+          <div *ngIf="userData.projects?.length > 0; else noProjects">
+            <div class="row g-3">
+              <div *ngFor="let proj of userData.projects" class="col-md-6">
+                <div class="project-card p-3 rounded-3 bg-white shadow-sm h-100 d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">{{ proj.name }}</h6>
+                    <p class="text-muted small mb-0">ID: {{ proj._id }}</p>
+                  </div>
+                  <button class="btn btn-sm gradient-btn"
+                    (click)="selectedProjectId = proj._id"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmRemoveProjectModal">
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noProjects>
+            <p class="text-muted mt-2">No projects assigned.</p>
+          </ng-template>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="card-footer d-flex justify-content-end bg-white px-4 py-3">
+      <button class="btn gradient-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#confirmDeleteUserModal">
+        Delete User
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Fallback -->
+<ng-template #noUser>
+  <div class="alert alert-warning text-center my-5">
+    No user data found.
+  </div>
+</ng-template>
+
+<!-- delete user modal -->
+<div class="modal fade" id="confirmDeleteUserModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-confirm rounded-4 shadow">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" #deleteUserClose class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to <strong>delete this user</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteUser()">
+          Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Remove Project Modal -->
+<div class="modal fade" id="confirmRemoveProjectModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modal-confirm rounded-4 shadow">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title">Confirm Remove</h5>
+        <button type="button" #removeProjectClose class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Remove this user from the selected project?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button
+          class="btn btn-warning text-dark"
+          data-bs-dismiss="modal"
+          (click)="removeFromProject(selectedProjectId)">
+          Yes, Remove
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+.app-footer {
+  background-color: rgba(20, 20, 35, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e5e7eb;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.footer-links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.footer-link {
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: #facc15;
+}
+
+.divider {
+  color: rgba(255, 255, 255, 0.4);
+}

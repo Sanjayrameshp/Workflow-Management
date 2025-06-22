@@ -1,0 +1,77 @@
+<div class="container py-5">
+  <div class="row mb-3">
+      <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
+    </div>
+  <div class="fade-in">
+    <h2 class="mb-4 text-center fw-bold text-gra">My Account</h2>
+
+    @if (userDetails) {
+      <div class="card profile-card shadow-lg rounded-4 border-0 overflow-hidden">
+        <!-- Header -->
+        <div class="card-header bg-gradient text-white d-flex align-items-center gap-3">
+          <div>
+            <h4 class="mb-0 text-gra">{{ userDetails.firstname }} {{ userDetails.lastname }}</h4>
+            <small class="text text-uppercase" style="color: black;">{{ userDetails.role }}</small>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body">
+          <div class="row mb-4">
+            <!-- Contact Info -->
+            <div class="col-md-6">
+              <h6 class="section-title mb-2">Contact Info</h6>
+              <p><i class="bi bi-envelope me-2 icon-style"></i>{{ userDetails.email }}</p>
+              <p><i class="bi bi-telephone me-2 icon-style"></i>{{ userDetails.phone }}</p>
+              <p><i class="bi bi-building me-2 icon-style"></i>Organization ID: {{ userDetails.organization }}</p>
+            </div>
+
+            <!-- Account Info -->
+            <div class="col-md-6">
+              <h6 class="section-title mb-2">Account Details</h6>
+              <p><i class="bi bi-person-badge me-2 icon-style"></i>User ID: {{ userDetails._id }}</p>
+              <p><i class="bi bi-clock-history me-2 icon-style"></i>Created: {{ userDetails.createdAt | date:'mediumDate' }}</p>
+              <p><i class="bi bi-clock me-2 icon-style"></i>Updated: {{ userDetails.updatedAt | date:'mediumDate' }}</p>
+            </div>
+          </div>
+
+          <!-- Projects -->
+          <h6 class="section-title mb-3">Assigned Projects</h6>
+          <div class="row g-3">
+            @for (project of userDetails.projects; track project._id) {
+              <div class="col-md-6">
+                <div class="project-card p-3 rounded-3 shadow-sm h-100 animate-hover">
+                  <h6 class="mb-1 project-title">
+                    <i class="bi bi-kanban-fill me-2 icon-style"></i>{{ project.name }}
+                  </h6>
+                  <p class="small mb-1">{{ project.description }}</p>
+                  <p class="small text-muted mb-1">
+                    <i class="bi bi-calendar-event me-1 icon-style"></i>
+                    {{ project.startDate | date:'shortDate' }} — {{ project.endDate | date:'shortDate' }}
+                  </p>
+                  <p class="small mb-2">
+                    <span class="badge px-3 py-1 status-badge text-uppercase"
+                          [ngClass]="{
+                            'status-active': project.status === 'active',
+                            'status-completed': project.status === 'completed',
+                            'status-cancelled': project.status === 'cancelled',
+                            'status-onhold': project.status === 'onhold'
+                          }">
+                      {{ project.status }}
+                    </span>
+                  </p>
+                  <button class="btn btn-sm view-btn" [routerLink]="['/project', project._id]" routerLinkActive="router-link-active" >View</button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="alert alert-warning text-center shadow-sm fade-in">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        User details are not available.
+      </div>
+    }
+  </div>
+</div>

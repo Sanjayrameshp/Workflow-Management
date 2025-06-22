@@ -1,0 +1,22 @@
+::ng-deep .p-breadcrumb {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+::ng-deep .p-breadcrumb .p-breadcrumb-item span {
+  color: #ffffff !important;
+}
+
+::ng-deep .p-breadcrumb .icon {
+  color: #ffffff !important;
+}
+
+::ng-deep .p-breadcrumb {
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+::ng-deep .p-breadcrumb .p-breadcrumb-separator {
+  color: white !important;
+}

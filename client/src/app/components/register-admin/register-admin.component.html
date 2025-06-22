@@ -1,0 +1,122 @@
+<div class="register-wrapper d-flex align-items-center justify-content-center">
+  <div class="container">
+    <div class="row mb-3">
+      <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-xl-8 col-lg-10 register-card p-4">
+
+        <div class="row justify-content-center mb-4">
+          <div class="col-md-8 text-center">
+            <h2 class="fw-bold text-white">Register an Organization</h2>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-md-8 col-lg-8" *ngIf="!otpSent">
+            <form [formGroup]="adminRegForm" (ngSubmit)="sendSignupOTP()" class="p-4 rounded">
+
+              <!-- 🟦 Organization Details Section -->
+              <div class="mb-4 border-bottom pb-3">
+                <h5 class="fw-semibold mb-3 text-white">Organization Info</h5>
+
+                <div class="mb-3">
+                  <label for="orgname" class="form-label text-white">Organization Name</label>
+                  <input type="text" id="orgname" formControlName="orgname" class="form-control" [ngClass]="{'is-invalid': isInvalid('orgname')}"/>
+                  <div *ngIf="isInvalid('orgname', 'required')" class="invalid-feedback">Organization name is required</div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="description" class="form-label text-white">Description</label>
+                  <textarea id="description" formControlName="description" class="form-control" rows="3" [ngClass]="{'is-invalid': isInvalid('description')}"></textarea>
+                  <div *ngIf="isInvalid('description', 'required')" class="invalid-feedback">Description is required</div>
+                </div>
+              </div>
+
+              <!-- 🟩 Personal Info -->
+              <div class="mb-4 border-bottom pb-3">
+                <h5 class="fw-semibold mb-3 text-white">Personal Info</h5>
+
+                <div class="mb-3">
+                  <label for="firstname" class="form-label text-white">First Name</label>
+                  <input type="text" id="firstname" formControlName="firstname" class="form-control" [ngClass]="{'is-invalid': isInvalid('firstname')}"/>
+                  <div *ngIf="isInvalid('firstname', 'required')" class="invalid-feedback">First name is required</div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="lastname" class="form-label text-white">Last Name</label>
+                  <input type="text" id="lastname" formControlName="lastname" class="form-control" [ngClass]="{'is-invalid': isInvalid('lastname')}"/>
+                  <div *ngIf="isInvalid('lastname', 'required')" class="invalid-feedback">Last name is required</div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="phone" class="form-label text-white">Phone</label>
+                  <input type="tel" id="phone" formControlName="phone" class="form-control" [ngClass]="{'is-invalid': isInvalid('phone')}"/>
+                  <div *ngIf="isInvalid('phone', 'required')" class="invalid-feedback">Phone number is required</div>
+                  <div *ngIf="isInvalid('phone', 'minlength')" class="invalid-feedback">Phone number must be at least 6 digits</div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-label text-white">Email</label>
+                  <input type="email" id="email" formControlName="email" class="form-control" [ngClass]="{'is-invalid': isInvalid('email')}"/>
+                  <div *ngIf="isInvalid('email', 'required')" class="invalid-feedback">Email is required</div>
+                  <div *ngIf="isInvalid('email', 'email')" class="invalid-feedback">Enter a valid email</div>
+                </div>
+              </div>
+
+              <!-- 🟥 Security -->
+              <div class="mb-4">
+                <h5 class="fw-semibold mb-3 text-white">Security</h5>
+
+                <div class="mb-3">
+                  <label for="password" class="form-label text-white">Password</label>
+                  <input id="password" type="password" formControlName="password" class="form-control" [ngClass]="{'is-invalid': isInvalid('password')}"/>
+                  <div *ngIf="isInvalid('password', 'required')" class="invalid-feedback">Password is required</div>
+                  <small [ngClass]="{'text-danger': isInvalid('password', 'minlength') && passwordControl?.dirty, 'text-success': isPasswordValid('password', 'minlength') && passwordControl?.dirty}" class="d-block mt-1">
+                    Password must be at least 6 characters
+                  </small>
+                  <small [ngClass]="{'text-danger': isInvalid('password', 'weakPassword') && passwordControl?.dirty, 'text-success': isPasswordValid('password', 'weakPassword') && passwordControl?.dirty}" class="d-block">
+                    Must include uppercase, lowercase, number, and special character (&#64;, #, *, $)
+                  </small>
+                </div>
+
+                <div class="mb-3">
+                  <label for="confirmPassword" class="form-label text-white">Confirm Password</label>
+                  <input type="password" id="confirmPassword" formControlName="confirmPassword"
+                         class="form-control"
+                         [ngClass]="{
+                           'is-invalid': isInvalid('confirmPassword') || 
+                                         (adminRegForm.hasError('passwordMismatch') && adminRegForm.get('confirmPassword')?.touched)
+                         }"/>
+                  <div *ngIf="isInvalid('confirmPassword', 'required')" class="invalid-feedback">Confirm Password is required</div>
+                  <div *ngIf="adminRegForm.hasError('passwordMismatch') && adminRegForm.get('confirmPassword')?.touched"
+                       class="invalid-feedback">
+                    Passwords do not match
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary" [disabled]="adminRegForm.invalid">Register</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- OTP Section -->
+          <div class="col-md-8 col-lg-8" *ngIf="otpSent">
+            <form [formGroup]="otpForm" class="p-4 rounded bg-light">
+              <div class="mb-3">
+                <label for="otp" class="form-label" style="color: black;">Enter OTP</label>
+                <input id="otp" type="text" formControlName="otp" class="form-control"/>
+              </div>
+              <div>
+                <button class="btn btn-success" (click)="submitAdminRegForm()" [disabled]="otpForm.get('otp')?.invalid">Verify OTP</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

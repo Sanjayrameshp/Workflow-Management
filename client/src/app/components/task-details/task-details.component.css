@@ -1,0 +1,93 @@
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.7s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Gradient Header */
+.gradient-header {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+}
+
+/* Info Cards */
+.info-card {
+  background: #fff;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+}
+
+.border-start-4 {
+  border-left-width: 4px !important;
+}
+
+/* Progress Bar inside card */
+.progress {
+  background-color: #f1f1f1;
+  border-radius: 30px;
+}
+
+/* Modal Styles: Keep as is */
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.bg-gradient-task {
+  background: linear-gradient(135deg, #3b82f6, #9333ea, #ec4899);
+}
+
+#editTaskModal .modal-content {
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+#editTaskModal .modal-header {
+  border-bottom: none;
+}
+
+#editTaskModal .modal-footer {
+  border-top: none;
+}
+
+#editTaskModal .form-control,
+#editTaskModal .form-select {
+  border-radius: 10px;
+  box-shadow: none;
+}

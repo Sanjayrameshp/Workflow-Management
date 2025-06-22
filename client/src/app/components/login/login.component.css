@@ -1,0 +1,74 @@
+.login-wrapper {
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  background-size: cover;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.login-card {
+  position: relative;
+  background: rgba(20, 20, 35, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 1.5rem;
+  padding: 3rem;
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  z-index: 1;
+  color: #e5e7eb;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, #facc15, #22d3ee, #9333ea, #f472b6, #84cc16);
+  background-size: 400% 400%;
+  animation: swirlColors 30s linear infinite;
+  opacity: 0.07;
+  z-index: 0;
+  filter: blur(12px);
+}
+
+.login-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.2), rgba(31, 41, 55, 0.4));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.login-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes swirlColors {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .login-card {
+    padding: 2rem;
+  }
+}
+
+.fg-password {
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 500;
+}
