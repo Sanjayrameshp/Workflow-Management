@@ -11,17 +11,17 @@
     </div>
 
     <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
-        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-card">
+      <div class="col-md-8 col-lg-6 login-card">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="">
 
           <!-- Email -->
           <div class="mb-4">
             <label for="email" class="form-label text-light">Email</label>
             <input id="email" type="email" formControlName="email" class="form-control"
-                   [ngClass]="{ 'is-invalid': isInvalid('email') }" />
+                   [ngClass]="{ 'is-invalid': isInvalid('email') }" (blur)="checkForMultipleOrgs()" />
             <div *ngIf="isInvalid('email')" class="invalid-feedback">Email is required</div>
           </div>
-
+ 
           <!-- Password -->
           <div class="mb-4">
             <label for="password" class="form-label text-light">Password</label>
@@ -31,13 +31,25 @@
           </div>
 
           <!-- Submit Button -->
-          <div class="d-grid">
+          <div class="d-grid" *ngIf="!isMutipleOrg">
             <button type="submit" class="btn btn-light btn-lg text-dark" [disabled]="loginForm.invalid">
               <i class="bi bi-box-arrow-in-right me-2"></i> Login
             </button>
           </div>
 
         </form>
+
+        <div class="org-select" *ngIf="isMutipleOrg">
+          <small>This email address belongs to multiple organizatuons/Account. Please select the organization to continue.</small>
+          <select class="form-select" [(ngModel)]="selectedOrg">
+            <option *ngFor="let org of orgsList" [value]="org._id">{{org.name}}</option>
+          </select>
+          <div class="d-grid mt-5">
+            <button type="submit" class="btn btn-light btn-lg text-dark" (click)="onLogin()" [disabled]="!selectedOrg">
+              <i class="bi bi-box-arrow-in-right me-2"></i> Login
+            </button>
+          </div>
+        </div>
         <div class="row" style="float: right;">
           <a [routerLink]="['/forgot-password']" class="fg-password" routerLinkActive="router-link-active">Forgot password ?</a>
         </div>

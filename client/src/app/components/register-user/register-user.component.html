@@ -46,7 +46,7 @@
             <div class="row g-3 mt-3">
               <div class="col-md-6">
                 <label for="phone" class="form-label text-light">Phone</label>
-                <input type="tel" id="phone" formControlName="phone" class="form-control" [ngClass]="{'is-invalid': isInvalid('phone')}"/>
+                <input type="number" id="phone" formControlName="phone" class="form-control" [ngClass]="{'is-invalid': isInvalid('phone')}"/>
                 <div *ngIf="isInvalid('phone', 'required')" class="invalid-feedback">Phone number is required</div>
                 <div *ngIf="isInvalid('phone', 'minlength')" class="invalid-feedback">Must be at least 6 digits</div>
               </div>

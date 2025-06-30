@@ -6,12 +6,11 @@ const jwt = require('jsonwebtoken')
 const userAuth = require('../middlewares/auth');
 const AdminAuth = require('../middlewares/adminAuth')
 const projectService = require('../services/projectService');
+const adminAuth = require('../middlewares/adminAuth');
 
 router.post('/createProject', AdminAuth ,async (req, res) => {
     try {
         const projectData = req.body;
-        console.log(" req body > ", req.body);
-        console.log(" req user > ", req.user);
 
         const createProject = await projectService.createProject(projectData, req.user);
         if( createProject.success) {
@@ -79,6 +78,71 @@ router.post('/getProjectDetails', userAuth ,async (req, res) => {
         }
     } catch (error) {
         res.send({success: false, message : error.message || 'Error while updating project', project: null});
+    }
+    
+});
+
+router.post('/projectTasksByStatus', userAuth ,async (req, res) => {
+    try {
+        const projectId = req.body.projectId;
+
+        const data = await projectService.projectTasksByStatus(projectId);
+        res.send({success: true, message : data.message || 'success', result: data});
+
+    } catch (error) {
+        res.send({success: false, message : error.message || 'Error while fetching task', result: null})
+    }
+    
+});
+
+router.post('/projectTasksByProgress', userAuth ,async (req, res) => {
+    try {
+        const projectId = req.body.projectId;
+
+        const data = await projectService.projectTasksByProgress(projectId);
+        res.send({success: true, message : data.message || 'success', result: data});
+
+    } catch (error) {
+        res.send({success: false, message : error.message || 'Error while fetching task', result: null});
+    }
+    
+});
+
+router.post('/projectTasksByPriority', userAuth ,async (req, res) => {
+    try {
+        const projectId = req.body.projectId;
+
+        const data = await projectService.projectTasksByPriority(projectId);
+        res.send({success: true, message : data.message || 'success', result: data});
+
+    } catch (error) {
+        res.send({success: false, message : error.message || 'Error while fetching task', result: null});
+    }
+    
+});
+
+router.post('/groupTasksByAssignedUser', userAuth ,async (req, res) => {
+    try {
+        const projectId = req.body.projectId;
+
+        const data = await projectService.groupTasksByAssignedUser(projectId);
+        res.send({success: true, message : data.message || 'success', result: data});
+
+    } catch (error) {
+        res.send({success: false, message : error.message || 'Error while fetching task', result: null});
+    }
+    
+});
+
+router.post('/addUserToProject', adminAuth ,async (req, res) => {
+    try {
+        const data = req.body;
+
+        const addProject = await projectService.addUserToProject(data);
+        res.send({success: true, message : addProject.message || 'successfully added to project'});
+
+    } catch (error) {
+        res.send({success: false, message : error.message || 'unable to add the user to the project'});
     }
     
 });

@@ -6,7 +6,7 @@
   justify-content: center;
   background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
   background-size: cover;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Baloo 2', sans-serif;
 }
 
 .register-card {
@@ -52,6 +52,12 @@
 .register-card > * {
   position: relative;
   z-index: 2;
+}
+
+.resend a {
+  cursor: pointer;
+  float: right;
+  text-decoration: underline;
 }
 
 /* Swirling animation */

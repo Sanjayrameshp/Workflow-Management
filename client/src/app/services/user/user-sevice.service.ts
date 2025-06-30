@@ -31,7 +31,11 @@ export class UserSevice {
     return this.http.post(expressapi.signUpOrgAndAdmin, {orgData,userData,otp});
   }
 
-  onLogin(loginData: { email: string, password: string }) {
+  checkForMultipleOrgs(email: string) {
+    return this.http.post(expressapi.checkForMultipleOrgs, {email});
+  }
+
+  onLogin(loginData: { email: string, password: string, organization?: string}) {
     return this.http.post(expressapi.onLogin, loginData).pipe(
       tap((res: any) => {
         if (res.success) {
@@ -73,7 +77,7 @@ export class UserSevice {
   );
  }
 
- inviteUser(data: {email: string, projectId:string}) {
+ inviteUser(data: {email: string}) {
   return this.http.post(expressapi.inviteUser,data)
  }
 
@@ -121,14 +125,16 @@ export class UserSevice {
     return this.http.post(expressapi.removeFromProject, data);
   }
 
+  searchUserByProject(data:any) {
+    return this.http.post(expressapi.searchUserByProject, data);
+  }
+
   logout(): void {
     localStorage.removeItem('jw_token');
     this.jwtToken.next(null);
     this.authStatus.next(false);
     this.userRole.next(null);
     this.currentUserSubject.next(null);
-    // Optional: call server logout endpoint
-    // this.http.post(expressapi.logout, {}).subscribe();
 }
 
 }

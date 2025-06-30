@@ -1,0 +1,41 @@
+.not-found-section {
+  min-height: 100vh;
+  background: linear-gradient(to right, #f9fafb, #eef2ff);
+  padding-top: 80px;
+}
+
+.text-brand {
+  color: #facc15;
+}
+
+.btn-glow {
+  background: #facc15;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+}
+
+.btn-glow:hover {
+  background: #fde68a;
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.9);
+  color: #000;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fadein {
+  animation: fadeIn 1s ease forwards;
+  opacity: 0;
+}

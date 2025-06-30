@@ -6,17 +6,20 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { UserSevice } from '../../services/user/user-sevice.service';
 import { CalendarModule } from 'primeng/calendar';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
+import { ChartData, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 @Component({
   selector: 'app-project',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterLink, CalendarModule, BreadcrumbComponent],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterLink, CalendarModule, BreadcrumbComponent, BaseChartDirective, PaginatorModule],
   templateUrl: './project.component.html',
   styleUrl: './project.component.css'
 })
 export class ProjectComponent implements OnInit {
 
   private taskService = inject(TaskService);
-  private userservice = inject(UserSevice);
+  private userService = inject(UserSevice);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -24,18 +27,25 @@ export class ProjectComponent implements OnInit {
   @ViewChild('taskFormClose') taskFormClose!: ElementRef;
   @ViewChild('editModalCloseBtn') editModalCloseBtn!: ElementRef;
 
+  userObject: any;
+  authStatus: boolean = false;
+
   projectId:any = '';
   usersList : any[] = [];
   tasks : any[] = [];
   project: any;
   breadCrumbItems : any[] = [];
+  searchUserText: string = '';
 
-  inviteForm!: FormGroup;
+  filteredUsers: any[] = [];
+  selectedUser: any = null;
+
   taskForm!: FormGroup;
 
   currentPage:number = 1;
   limit: number = 10;
   totalPages: number = 0;
+  totalTasks: number = 0;
 
   search = '';
   selectedStatus = '';
@@ -47,36 +57,90 @@ export class ProjectComponent implements OnInit {
 
   editForm!: FormGroup;
   minDate!: Date;
+  taskSearchDebounce: any;
+  userSearchDebounce:any;
+
+  tasksByStatus: any[] = [];
+  tasksByProgress: any[] = [];
+  tasksByPriority: any[] = [];
+  tasksByUser: any[] = [];
+
+  statusChartData: ChartData<'pie'> = { labels: [], datasets: [] };
+  progressChartData: ChartData<'pie'> = { labels: [], datasets: [] };
+  priorityChartData: ChartData<'pie'> = { labels: [], datasets: [] };
+  userChartData: ChartData<'bar'> = { labels: [], datasets: [] };
+
+  statusChartType: ChartType = 'pie';
+  progressChartType: ChartType = 'pie';
+  priorityChartType: ChartType = 'pie';
+  userChartType: ChartType = 'bar';
+
+  userChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: true, position: 'bottom' }
+  },
+  scales: {
+    x: {
+      title: { display: true, text: 'User' }
+    },
+    y: {
+      title: { display: true, text: 'Number of Tasks' },
+      beginAtZero: true
+    }
+  }
+};
+
 
   ngOnInit(): void {
     this.minDate = new Date();
 
-    this.activatedRoute.paramMap.subscribe((params) => {
-      this.projectId = params.get('projectid');
-      if(this.projectId) {
-        this.getProjectDetails();
-        this.getUsersList();
-      }
-    });
+    this.userService.getUserObject().subscribe({
+        next:(user)=> {
+          this.userObject = user;
+          this.userService.getAuthStatus().subscribe({
+            next:(status) => {
+              this.authStatus = status;
 
-    this.inviteForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
+              this.activatedRoute.paramMap.subscribe((params) => {
+                this.projectId = params.get('projectid');
+                if(this.projectId) {
+                  if(this.authStatus) {
+                    this.getProjectDetails();
+                    this.getProjectAnalytics();
+                  }
+                  if(this.userObject && this.userObject.role === 'admin') {
+                    this.getUsersList();
+                  }
+                }
+              });
+              
+            },error:(error)=> {
+              this.authStatus = false;
+            }
+          })
+        },
+        error:(error)=> {
+          this.userObject = null;
+      }
     });
 
     this.taskForm = new FormGroup({
       title: new FormControl('', Validators.required),
-      description: new FormControl(''),
-      status: new FormControl('started'),
-      priority: new FormControl('medium'),
-      endDate: new FormControl(''),
-      startDate: new FormControl(''),
-      assignedTo: new FormControl('')
+      description: new FormControl('', Validators.required),
+      status: new FormControl('started', Validators.required),
+      priority: new FormControl('medium', Validators.required),
+      endDate: new FormControl('', Validators.required),
+      startDate: new FormControl('', Validators.required),
+      assignedTo: new FormControl('', Validators.required),
+      customMessage: new FormControl('')
     });
 
     this.editForm = new FormGroup({
       name: new FormControl({ value: '', disabled: true }, Validators.required),
       description: new FormControl(''),
-      startDate: new FormControl({ value: '', disabled: true }),
+      startDate: new FormControl({ value: '', disabled: true }, Validators.required),
       endDate: new FormControl(''),
       status: new FormControl(''),
     });
@@ -113,6 +177,8 @@ export class ProjectComponent implements OnInit {
   }
 
   setEditFormField(projectdata:any) {
+    console.log("PROJECT ET> ", JSON.stringify(projectdata));
+    
     this.editForm.patchValue({
       name: projectdata.name,
       description: projectdata.description,
@@ -120,35 +186,6 @@ export class ProjectComponent implements OnInit {
       endDate: projectdata.endDate ? new Date(projectdata.endDate) : null,
       status: projectdata.status
     });
-  }
-
-  inviteUser() {
-    console.log("user invite > ", this.inviteForm.value);
-    if(!this.inviteForm.valid) return;
-
-    this.taskService.showloading(true);
-    this.userservice.inviteUser({email : this.inviteForm.value.email, projectId : this.projectId}).subscribe({
-      next:(data:any) => {
-        if(data.success) {
-          this.taskService.showloading(false);
-          this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
-          this.inviteClose.nativeElement.click();
-          this.inviteForm.reset();
-        } else {
-          this.taskService.showloading(false);
-          this.taskService.showAlertMessage('error', data.message || 'Error while sending invite mail', 3000);
-          this.inviteClose.nativeElement.click();
-          this.inviteForm.reset();
-        }
-      },
-      error:(error) => {
-        this.taskService.showloading(false);
-        this.taskService.showAlertMessage('error', error.message || 'Error while sending invite mail', 3000);
-        this.inviteClose.nativeElement.click();
-        this.inviteForm.reset();
-      }
-    })
-    
   }
 
   submitTaskForm() {
@@ -161,6 +198,7 @@ export class ProjectComponent implements OnInit {
       endDate: this.taskForm.value.endDate,
       startDate: this.taskForm.value.startDate,
       assignedTo: this.taskForm.value.assignedTo,
+      customMessage: this.taskForm.value.customMessage ? this.taskForm.value.customMessage : '',
       projectId: this.projectId
     }
 
@@ -191,7 +229,6 @@ export class ProjectComponent implements OnInit {
       }
     })
     
-
   }
 
   getTasks() {
@@ -205,18 +242,19 @@ export class ProjectComponent implements OnInit {
       status : this.selectedStatus
     }
 
+    console.log("DATA >>> ", options);
+    
     this.taskService.showloading(true);
 
     this.taskService.getTasks(options).subscribe({
       next:(data:any) => {
         this.taskService.showloading(false);
         console.log("tasks > ", data);
-        // this.projects = data.projects;
         this.tasks = data.tasks;
-        // this.totalPages = data.meta.totalPages;
+        this.totalPages = data.meta.totalPages;
+        this.totalTasks = data.meta.total;
         
       },error:(error)=> {
-        // this.projects = [];
         this.taskService.showloading(false);
         this.taskService.showAlertMessage('success', error.message || 'Failed to fetch projects', 3000);
         
@@ -225,8 +263,23 @@ export class ProjectComponent implements OnInit {
 
   }
 
+  searchTasks() {
+    console.log("serarck q-> ", this.search);
+    clearTimeout(this.taskSearchDebounce)
+    this.taskSearchDebounce = setTimeout(()=> {
+      this.getTasks();
+    }, 500)
+    
+  }
+
+  onPageChange(event: any): void {
+    this.limit = event.rows;
+    this.currentPage = Math.floor(event.first / this.limit) + 1;
+    this.getTasks();
+  }
+
   getUsersList() {
-    this.userservice.getUsersByProject(this.projectId).subscribe({
+    this.userService.getUsersByProject(this.projectId).subscribe({
       next:(users:any) => {
         console.log("USERS LIST > ", users);
         
@@ -242,6 +295,74 @@ export class ProjectComponent implements OnInit {
         this.usersList= [];
       }
     })
+  }
+
+  onSearchUser(query: string) {
+    if (query && query.length >= 2) {
+      let data = {
+        searchText: query,
+        projectId: this.projectId
+      }
+      this.userSearchDebounce = setTimeout(()=> {
+        this.userService.searchUserByProject(data).subscribe({
+          next:(data:any) => {
+            console.log("data > ", data);
+            
+          if(data.success) {
+            this.filteredUsers = data.users;
+          } else {
+            this.filteredUsers = [];
+          }
+        },
+        error:(error) => {
+          this.filteredUsers = [];
+        }
+        })
+      }) 
+    } else {
+      this.filteredUsers = [];
+    }
+  }
+
+  selectUser(user:any) {
+    this.selectedUser = user;
+    this.searchUserText = `${user.firstname} ${user.lastname} (${user.email})`; // Set in input
+    this.filteredUsers = [];
+  }
+
+  addUserToProject() {
+    if(this.selectedUser) {
+      let data = {
+        userId : this.selectedUser._id,
+        email: this.selectedUser.email,
+        projectId: this.projectId,
+        org: this.selectedUser.organization
+      }
+      this.taskService.addUserToProject(data).subscribe({
+        next:(data:any) => {
+          if(data.success) {
+            this.taskService.showloading(false);
+            this.taskService.showAlertMessage('success', data.message || 'Successfully assigned projects', 3000);
+            this.inviteClose.nativeElement.click();
+            this.getProjectDetails();
+            this.getUsersList();
+          } else {
+            this.getProjectDetails();
+            this.taskService.showloading(false);
+            this.taskService.showAlertMessage('error', data.message || 'Error while assigning project', 3000);
+            this.inviteClose.nativeElement.click();
+            this.getUsersList();
+          }
+        },
+        error:(error) => {
+          this.getProjectDetails();
+          this.taskService.showloading(false);
+          this.taskService.showAlertMessage('error', error.message || 'Error while assigning project', 3000);
+          this.inviteClose.nativeElement.click();
+          this.getUsersList();
+        }
+      })
+    }
   }
 
   submitUpdateForm() {
@@ -275,7 +396,138 @@ export class ProjectComponent implements OnInit {
       }
     })
 
-
   }
+
+  getProjectAnalytics() {
+    this.projectTasksByStatus();
+    this.projectTasksByProgress();
+    this.projectTasksByPriority();
+    this.groupTasksByAssignedUser();
+  }
+
+  projectTasksByStatus() {
+    let data = {
+      projectId : this.projectId
+    }
+    this.taskService.projectTasksByStatus(data).subscribe({
+      next:(data:any) => {
+        
+        console.log("SATAUS > ", JSON.stringify(data));
+        if(data.success) {
+          this.taskService.showloading(false);
+          this.tasksByStatus = data.result?.result || [];
+
+          this.statusChartData = {
+            labels: this.tasksByStatus.map((item: any) => item._id.toString()),
+            datasets: [
+              {
+                data: this.tasksByStatus.map((item: any) => item.count),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800', '#9C27B0', '#00BCD4'],
+              },
+            ],
+          };
+          
+        } else {
+          this.taskService.showloading(false);
+        }
+      },
+      error:(error) => {
+        this.taskService.showloading(false);
+      }
+    })
+  }
+
+  projectTasksByProgress() {
+    let data = {
+      projectId : this.projectId
+    }
+    this.taskService.projectTasksByProgress(data).subscribe({
+      next:(data:any) => {
+        console.log("PROGRESS > ", JSON.stringify(data));
+        if(data.success) {
+          this.taskService.showloading(false);
+          this.tasksByProgress = data.result?.result || [];
+
+          this.progressChartData = {
+            labels: this.tasksByProgress.map((item: any) => item._id?.toString()),
+            datasets: [
+              {
+                data: this.tasksByProgress.map((item: any) => item.count),
+              },
+            ],
+          };
+        } else {
+          this.taskService.showloading(false);
+        }
+      },
+      error:(error) => {
+        this.taskService.showloading(false);
+      }
+    })
+  }
+
+  projectTasksByPriority() {
+    let data = {
+      projectId : this.projectId
+    }
+    this.taskService.projectTasksByPriority(data).subscribe({
+      next:(data:any) => {
+        console.log("PRIORITY > ", data);
+        if(data.success) {
+          this.taskService.showloading(false);
+          this.tasksByPriority = data.result?.result || [];
+
+          this.priorityChartData = {
+            labels: this.tasksByPriority.map((item: any) => item._id),
+            datasets: [
+              {
+                data: this.tasksByPriority.map((item: any) => item.count),
+                backgroundColor: ['#2196F3', '#FF9800', '#F44336'], // medium, low, high or any order
+              },
+            ],
+          };
+        } else {
+          this.taskService.showloading(false);
+        }
+      },
+      error:(error) => {
+        this.taskService.showloading(false);
+      }
+    })
+  }
+
+  groupTasksByAssignedUser() {
+    let data = {
+      projectId : this.projectId
+    }
+    this.taskService.groupTasksByAssignedUser(data).subscribe({
+      next:(data:any) => {
+        console.log("USERS DATA > ", JSON.stringify(data));
+        if(data.success) {
+          this.taskService.showloading(false);
+          this.tasksByUser = data.result?.result || [];
+
+          this.userChartData = {
+            labels: this.tasksByUser.map((item: any) => item.name || 'Unassigned'),
+            datasets: [
+              {
+                label: 'Number of Tasks',
+                data: this.tasksByUser.map((item: any) => item.taskCount),
+                backgroundColor: '#42A5F5'
+              }
+            ]
+          };
+
+        } else {
+          this.taskService.showloading(false);
+        }
+      },
+      error:(error) => {
+        this.taskService.showloading(false);
+      }
+    })
+  }
+
+
 
 }

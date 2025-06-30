@@ -6,6 +6,7 @@ const puppeteer = require('puppeteer');
 
 var createTask = async function(taskData, user) {
     try {
+      console.log("taskData >> ", taskData);
         const newTask = new Task({
             title : taskData.title,
             description : taskData.description,
@@ -13,6 +14,7 @@ var createTask = async function(taskData, user) {
             priority : taskData.priority,
             endDate : taskData.endDate,
             startDate: taskData.startDate,
+            customMessage: taskData.customMessage,
             project : taskData.projectId,
             assignedTo : taskData.assignedTo,
             createdBy : user._id,
@@ -22,6 +24,7 @@ var createTask = async function(taskData, user) {
         return { success: true, message: 'Task created successfully' }
     
     } catch (error) {
+      console.log("errror 22 >> ", error);
         return { success: fasle, message: error.message || 'Error while creating new task' }
     }
 }
@@ -53,7 +56,7 @@ var getTasks = async function(options, user) {
         }
 
         if (search) {
-            filter.name = { $regex: search, $options: 'i' };
+            filter.title = { $regex: search, $options: 'i' };
         }
         if (status) {
             filter.status = status;
@@ -111,7 +114,20 @@ var getTaskDetails = async function(taskId, user) {
 
 var updateTask = async function(taskId, taskData) {
     try {
-        const updatedTask = await Task.findByIdAndUpdate(taskId, { status: taskData.status, progress: taskData.progress, endDate: taskData.endDate ? new Date(taskData.endDate) : undefined}, { new: true, runValidators: true });
+        const updateFields = {
+          status: taskData.status,
+          progress: taskData.progress,
+          endDate: taskData.endDate ? new Date(taskData.endDate) : undefined,
+          customMessage: taskData.customMessage ? taskData.customMessage : ''
+        };
+        if (taskData.assignedTo) {
+          updateFields.assignedTo = taskData.assignedTo;
+        }
+        const updatedTask = await Task.findByIdAndUpdate(
+          taskId,
+          updateFields,
+          { new: true, runValidators: true }
+        );
          if (!updatedTask) {
             return res.send({ success: false, message: 'Task not found' });
         }
@@ -263,149 +279,147 @@ var generatePdf = async function (data) {
     });
 
     const html = `<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 30px;
-      position: relative;
-    }
+      <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            position: relative;
+          }
 
-    /* Watermark container */
-    .watermark-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 9999;
-    }
+          /* Watermark container */
+          .watermark-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+          }
 
-    .watermark {
-      position: absolute;
-      font-size: 40px;
-      color: rgba(150, 150, 150, 0.08);
-      transform: rotate(-30deg);
-      white-space: nowrap;
-    }
+          .watermark {
+            position: absolute;
+            font-size: 40px;
+            color: rgba(150, 150, 150, 0.08);
+            transform: rotate(-30deg);
+            white-space: nowrap;
+          }
 
-    .card {
-      border: 1px solid #ddd;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      background: white;
-      position: relative;
-      z-index: 1;
-    }
+          .card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: white;
+            position: relative;
+            z-index: 1;
+          }
 
-    h1 {
-      font-size: 28px;
-      background: linear-gradient(to right, #e74c3c, #3498db);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+          h1 {
+            font-size: 28px;
+            background: linear-gradient(to right, #e74c3c, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
 
-    h2 {
-      color: #0a3d62;
-      margin-bottom: 10px;
-    }
+          h2 {
+            color: #0a3d62;
+            margin-bottom: 10px;
+          }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+          }
 
-    th, td {
-      padding: 10px;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
+          th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+          }
 
-    th {
-      background-color: #f0f0f0;
-    }
-  </style>
-</head>
-<body>
+          th {
+            background-color: #f0f0f0;
+          }
+        </style>
+      </head>
+      <body>
 
-  <!-- Watermark Overlay -->
-  <div class="watermark-container">
-    ${[...Array(5)].map((_, i) =>
-      [...Array(3)].map((_, j) =>
-        `<div class="watermark" style="top:${i * 200}px; left:${j * 300}px;">Quantivio</div>`
-      ).join('')
-    ).join('')}
-  </div>
+        <!-- Watermark Overlay -->
+        <div class="watermark-container">
+          ${[...Array(5)].map((_, i) =>
+            [...Array(3)].map((_, j) =>
+              `<div class="watermark" style="top:${i * 200}px; left:${j * 300}px;">Quantivio</div>`
+            ).join('')
+          ).join('')}
+        </div>
 
-  <h1>User Analytics Report</h1>
+        <h1>User Analytics Report</h1>
 
-  <div class="card">
-    <h2>User Info</h2>
-    <p><strong>Name:</strong> ${user.firstname} ${user.lastname}</p>
-    <p><strong>Email:</strong> ${user.email}</p>
-    <p><strong>Role:</strong> ${user.role}</p>
-  </div>
+        <div class="card">
+          <h2>User Info</h2>
+          <p><strong>Name:</strong> ${user.firstname} ${user.lastname}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Role:</strong> ${user.role}</p>
+        </div>
 
-  <div class="card">
-    <h2>Project Info</h2>
-    <p><strong>Name:</strong> ${project.name}</p>
-    <p><strong>Status:</strong> ${project.status}</p>
-    <p><strong>Description:</strong> ${project.description || 'N/A'}</p>
-    <p><strong>Start:</strong> ${project.startDate.toDateString()}</p>
-    <p><strong>End:</strong> ${project.endDate ? project.endDate.toDateString() : 'N/A'}</p>
-  </div>
+        <div class="card">
+          <h2>Project Info</h2>
+          <p><strong>Name:</strong> ${project.name}</p>
+          <p><strong>Status:</strong> ${project.status}</p>
+          <p><strong>Description:</strong> ${project.description || 'N/A'}</p>
+          <p><strong>Start:</strong> ${project.startDate.toDateString()}</p>
+          <p><strong>End:</strong> ${project.endDate ? project.endDate.toDateString() : 'N/A'}</p>
+        </div>
 
-  <div class="card">
-    <h2>Task Summary</h2>
-    <p><strong>Total Tasks:</strong> ${taskCount}</p>
-    <p><strong>By Status:</strong></p>
-    <ul>
-      ${Object.entries(statusCount).map(([k, v]) => `<li>${k}: ${v}</li>`).join('')}
-    </ul>
-    <p><strong>By Priority:</strong></p>
-    <ul>
-      ${Object.entries(priorityCount).map(([k, v]) => `<li>${k}: ${v}</li>`).join('')}
-    </ul>
-  </div>
+        <div class="card">
+          <h2>Task Summary</h2>
+          <p><strong>Total Tasks:</strong> ${taskCount}</p>
+          <p><strong>By Status:</strong></p>
+          <ul>
+            ${Object.entries(statusCount).map(([k, v]) => `<li>${k}: ${v}</li>`).join('')}
+          </ul>
+          <p><strong>By Priority:</strong></p>
+          <ul>
+            ${Object.entries(priorityCount).map(([k, v]) => `<li>${k}: ${v}</li>`).join('')}
+          </ul>
+        </div>
 
-  <div class="card">
-    <h2>Task List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Priority</th>
-          <th>Progress</th>
-          <th>Start</th>
-          <th>End</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tasks.map((task, i) => `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${task.title}</td>
-            <td>${task.status}</td>
-            <td>${task.priority}</td>
-            <td>${task.progress}%</td>
-            <td>${new Date(task.startDate).toLocaleDateString()}</td>
-            <td>${task.endDate ? new Date(task.endDate).toLocaleDateString() : 'N/A'}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  </div>
+        <div class="card">
+          <h2>Task List</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Progress</th>
+                <th>Start</th>
+                <th>End</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tasks.map((task, i) => `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${task.title}</td>
+                  <td>${task.status}</td>
+                  <td>${task.priority}</td>
+                  <td>${task.progress}%</td>
+                  <td>${new Date(task.startDate).toLocaleDateString()}</td>
+                  <td>${task.endDate ? new Date(task.endDate).toLocaleDateString() : 'N/A'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
 
-</body>
-</html>`;
-
-
+      </body>
+    </html>`;
 
     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
     const page = await browser.newPage();

@@ -103,7 +103,7 @@
     <!-- Tasks by Progress -->
     <div class="col-md-4" *ngIf="progressChartData.labels?.length; else noProgressData">
       <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
-        <h5 class="text-center mb-3">Tasks by Progress</h5>
+        <h5 class="text-center mb-3">Tasks by Progress (%)</h5>
         <canvas baseChart [data]="progressChartData" [type]="progressChartType" [width]="400" [height]="200"></canvas>
       </div>
     </div>

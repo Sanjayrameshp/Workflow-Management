@@ -88,6 +88,26 @@ export class TaskService {
     });
   }
 
+  projectTasksByStatus(data :any) {
+    return this.http.post(expressapi.projectTasksByStatus, data);
+  }
+
+  projectTasksByProgress(data :any) {
+    return this.http.post(expressapi.projectTasksByProgress, data);
+  }
+
+  projectTasksByPriority(data :any) {
+    return this.http.post(expressapi.projectTasksByPriority, data);
+  }
+
+  groupTasksByAssignedUser(data :any) {
+    return this.http.post(expressapi.groupTasksByAssignedUser, data);
+  }
+
+  addUserToProject(data :any) {
+    return this.http.post(expressapi.addUserToProject, data);
+  }
+
   showAlertMessage(type:Alert['severity'], message: string, duration: number) {
     const messageModel = {
       severity: type,

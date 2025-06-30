@@ -51,7 +51,7 @@
 
                 <div class="mb-3">
                   <label for="phone" class="form-label text-white">Phone</label>
-                  <input type="tel" id="phone" formControlName="phone" class="form-control" [ngClass]="{'is-invalid': isInvalid('phone')}"/>
+                  <input type="number" id="phone" formControlName="phone" class="form-control" [ngClass]="{'is-invalid': isInvalid('phone')}"/>
                   <div *ngIf="isInvalid('phone', 'required')" class="invalid-feedback">Phone number is required</div>
                   <div *ngIf="isInvalid('phone', 'minlength')" class="invalid-feedback">Phone number must be at least 6 digits</div>
                 </div>
@@ -112,7 +112,9 @@
               <div>
                 <button class="btn btn-success" (click)="submitAdminRegForm()" [disabled]="otpForm.get('otp')?.invalid">Verify OTP</button>
               </div>
+              <small style="color: black; margin-top: 10px;">note* : The OTP will expire after 5 minutes.</small>
             </form>
+            <div class="resend mt-3"><a (click)="sendSignupOTP()">Click here to resend OTP</a></div>
           </div>
         </div>
 

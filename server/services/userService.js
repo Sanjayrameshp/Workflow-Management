@@ -20,9 +20,12 @@ var sendSignupOTP = async function(email) {
 
         const hashedOtp = await crypto.createHash('sha256').update(generatedOtp).digest('hex');
 
+        await OTP.deleteMany({ email: email, type: 'adminsignup'});
+
         const createdOtp = await new OTP({
             email : email,
-            otp : hashedOtp
+            otp : hashedOtp,
+            type : 'adminsignup'
         })
 
         await createdOtp.save();
@@ -69,6 +72,10 @@ var createUser = async function(userData, orgId) {
 
         const savedUser = await newUser.save();
 
+        if(savedUser) {
+            await emailService.sendWelcomeEmail(savedUser);
+        }
+
         return { success: true, user : savedUser, message: 'User created successfully, Please login to continue' }
     } catch (error) {
         console.error('Error creating user:', error);
@@ -76,7 +83,7 @@ var createUser = async function(userData, orgId) {
     }
 }
 
-var inviteUser = async function(email, user, projectId) {
+var inviteUser = async function(email, user) {
     try {
         const token = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
@@ -87,15 +94,15 @@ var inviteUser = async function(email, user, projectId) {
             token: hashedToken,
             expiresAt: new Date(expires),
             adminref: user._id,
-            projectId: projectId
+            org: user.org
         });
         const inviteLink = `http://localhost:4200/register-user?token=${token}`;
 
         await emailService.sendInvitationEmail(email, inviteLink)
-        return { success: true, message: 'An user invite mail has been sent' };
+        return { success: true, message: 'An user invitation mail has been sent' };
     } catch (error) {
-        console.error('Error creating organization:', error);
-        return { success: false, message: error.message || 'error while sending invite mail' };
+        console.error('Error ', error);
+        return { success: false, message: error.message || 'error while sending invitation mail' };
     }
 }
 
@@ -107,7 +114,6 @@ var registerNewUser = async function(userData) {
 
         console.log("Validate token > ", validateToken);
         
-
         if(!validateToken) {
             return { success : false, message : 'Token validation failed'}
         }
@@ -119,16 +125,10 @@ var registerNewUser = async function(userData) {
         validateToken.verified = true;
         await validateToken.save();
 
-        const adminUser = await User.findOne({ '_id' : validateToken.adminref, 'role' : 'admin'});
+        const adminUser = await User.findOne({ '_id' : new mongoose.Types.ObjectId(validateToken.adminref), 'role' : 'admin'});
 
         if(!adminUser) {
             return { success : false, message : 'Authentication failed'}
-        }
-
-        let project = await Project.findOne({ _id : validateToken.projectId});
-
-        if(!project) {
-            return { success : false, message : 'Project expired'}
         }
 
         const newUser = new User({
@@ -139,8 +139,7 @@ var registerNewUser = async function(userData) {
             role : userData.role,
             password : userData.password,
             organization : adminUser.organization,
-            adminRef : adminUser._id,
-            projects: [validateToken.projectId]
+            adminRef : adminUser._id
         })
 
         newUser.save();
@@ -309,6 +308,29 @@ var removeFromProject = async function(userId, projectId, admin) {
     }
 }
 
+const searchUserByProject = async function(searchText, projectId, admin) {
+  try {
+    const regex = new RegExp(searchText, 'i');
+
+    const users = await User.find({
+      organization: admin.organization,
+      projects: { $ne: projectId },
+      $or: [
+        { email: { $regex: regex } },
+        { firstname: { $regex: regex } },
+        { lastname: { $regex: regex } }
+      ]
+    });
+
+    return { success: true, data: users };
+  } catch (error) {
+    console.error('Error searching user:', error);
+    return { success: false, message: error.message || 'Error while searching user', data: [] };
+  }
+};
+
+
+
 module.exports.createOrganization = createOrganization;
 module.exports.createUser = createUser;
 module.exports.sendSignupOTP = sendSignupOTP;
@@ -323,3 +345,4 @@ module.exports.getUsersByAdmin = getUsersByAdmin;
 module.exports.getUserDetailsForAdmin = getUserDetailsForAdmin;
 module.exports.deleteUser = deleteUser;
 module.exports.removeFromProject = removeFromProject;
+module.exports.searchUserByProject = searchUserByProject;

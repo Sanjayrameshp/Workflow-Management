@@ -83,6 +83,11 @@
   border-radius: 8px;
 }
 
+.dashboard-title h1 {
+  color: #ffffff;
+  font-weight: 600;
+  font-family: "Baloo 2", Sans-serif;
+}
 .create-project-btn {
   background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
 }
@@ -94,8 +99,8 @@
 .project-card {
   background-color: #ffffff;
   border-left: 6px solid #160327;
-  max-width: 800px;
-  width: 100%;
+  /* max-width: 800px; */
+  /* width: 100%; */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -118,7 +123,7 @@
   background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
   color: #fff;
   border: none;
-  padding: 0.4rem 1rem;
+  padding: 5px 50px;
   border-radius: 8px;
   font-size: 0.9rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -140,4 +145,152 @@
 
 .section-title {
   color: #ffffff;
+}
+
+#inviteUserModal .modal-content {
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: none;
+  background-color: #ffffff;
+}
+
+/* Header with gradient */
+#inviteUserModal .modal-header {
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+/* Title styling */
+#inviteUserModal .modal-title {
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+/* Modal body background */
+#inviteUserModal .modal-body {
+  background-color: #f9fafb;
+  padding: 2rem;
+}
+
+/* Footer background */
+#inviteUserModal .modal-footer {
+  background-color: #f1f5f9;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  padding: 1rem 1.5rem;
+}
+
+/* Labels */
+#inviteUserModal .form-label {
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Input fields */
+#inviteUserModal .form-control {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#inviteUserModal .form-control:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 0.1rem rgba(168, 85, 247, 0.25);
+}
+
+/* Primary button */
+#inviteUserModal .btn-primary {
+  border-radius: 8px;
+  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
+  border: none;
+  color: white;
+  transition: background 0.3s ease;
+}
+
+#inviteUserModal .btn-primary:hover {
+  background: linear-gradient(120deg, #2563eb, #9333ea, #a855f7);
+}
+
+/* Secondary (Cancel) button */
+#inviteUserModal .btn-secondary {
+  border-radius: 8px;
+  background-color: #e5e7eb;
+  color: #374151;
+  border: none;
+}
+
+/* Validation message */
+#inviteUserModal .text-danger {
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.btn-section .btn-primary {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  color: #fff;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.btn-section .btn-primary:hover {
+  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  box-shadow: 0 8px 20px rgba(156, 63, 243, 0.4);
+  transform: translateY(-2px);
+}
+
+.total-project-number {
+  color: #ffffff;
+  font-weight: 600;
+  text-align: right;
+  font-size: 20px;
+}
+
+/* paginator styles */
+:host ::ng-deep .p-paginator {
+  background-color: transparent !important;
+  border: none !important;
+  color: white !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-page,
+:host ::ng-deep .p-paginator .p-dropdown {
+  background-color: transparent !important;
+  color: white !important;
+  border: 2px solid white !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-page-selected {
+  background-color: white !important;
+  color: black !important;
+  font-weight: 600;
+  border: 2px solid white !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-prev,
+:host ::ng-deep .p-paginator .p-paginator-next,
+:host ::ng-deep .p-paginator .p-paginator-first,
+:host ::ng-deep .p-paginator .p-paginator-last {
+  background-color: rgb(255, 255, 255) !important;
+  color: black !important;
+  border: 2px solid rgb(255, 255, 255) !important;
+}
+
+:host ::ng-deep .p-paginator .p-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  background-color: rgb(147, 135, 135) !important;
+  color: rgb(255, 255, 255) !important;
+  border: 2px solid white !important;
 }

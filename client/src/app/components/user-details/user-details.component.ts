@@ -15,7 +15,7 @@ import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.componen
 export class UserDetailsComponent implements OnInit {
 
   private taskService = inject(TaskService);
-  private userservice = inject(UserSevice);
+  private userService = inject(UserSevice);
   private activatedRoute = inject(ActivatedRoute);
 
   @ViewChild('deleteUserClose') deleteUserClose!: ElementRef;
@@ -25,6 +25,8 @@ export class UserDetailsComponent implements OnInit {
   userData: any;
   selectedProjectId: string | null = null;
   breadCrumbItems : any[] = [];
+  loggedUser : any;
+  authStatus: boolean = false;
 
   ngOnInit(): void {
     this.breadCrumbItems = [
@@ -32,16 +34,33 @@ export class UserDetailsComponent implements OnInit {
       {label: 'Dashboard', route: '/dashboard'},
       {label: 'User Details'}
     ];
-    this.activatedRoute.paramMap.subscribe((params) => {
-      this.userId = params.get('userid');
-      if(this.userId) {
-        this.getUserDetails();
+
+    this.userService.getUserObject().subscribe({
+        next:(user)=> {
+          this.loggedUser = user;
+          
+          this.userService.getAuthStatus().subscribe({
+            next:(status) => {
+              this.authStatus = status;
+              this.activatedRoute.paramMap.subscribe((params) => {
+              this.userId = params.get('userid');
+                if(this.userId && this.authStatus) {
+                  this.getUserDetails();
+                }
+              });
+            },error:(error)=> {
+              this.authStatus = false;
+            }
+          })
+        },
+        error:(error)=> {
+          this.loggedUser = null;
       }
     });
   }
 
   getUserDetails() {
-    this.userservice.getUserDetailsForAdmin(this.userId).subscribe({
+    this.userService.getUserDetailsForAdmin(this.userId).subscribe({
       next:(data:any) => {
         console.log("pro <", JSON.stringify(data));
         if(data.success) {
@@ -74,7 +93,7 @@ export class UserDetailsComponent implements OnInit {
       projectId
     }
 
-    this.userservice.removeFromProject(data).subscribe({
+    this.userService.removeFromProject(data).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);
@@ -102,7 +121,7 @@ export class UserDetailsComponent implements OnInit {
       return;
     }
 
-    this.userservice.deleteUser(this.userId).subscribe({
+    this.userService.deleteUser(this.userId).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);

@@ -30,4 +30,11 @@ export const expressapi = {
   deleteUser: environment.apiUrl + '/user/deleteUser',
   removeFromProject: environment.apiUrl + '/user/removeFromProject',
   generatePdf: environment.apiUrl + '/task/generatePdf',
+  projectTasksByStatus: environment.apiUrl + '/project/projectTasksByStatus',
+  projectTasksByProgress: environment.apiUrl + '/project/projectTasksByProgress',
+  projectTasksByPriority: environment.apiUrl + '/project/projectTasksByPriority',
+  groupTasksByAssignedUser: environment.apiUrl + '/project/groupTasksByAssignedUser',
+  searchUserByProject: environment.apiUrl + '/user/searchUserByProject',
+  addUserToProject: environment.apiUrl + '/project/addUserToProject',
+  checkForMultipleOrgs: environment.apiUrl + '/user/checkForMultipleOrgs',
 };

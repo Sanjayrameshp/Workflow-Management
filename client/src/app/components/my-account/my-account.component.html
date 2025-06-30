@@ -5,13 +5,13 @@
   <div class="fade-in">
     <h2 class="mb-4 text-center fw-bold text-gra">My Account</h2>
 
-    @if (userDetails) {
+    @if (userDetails) { 
       <div class="card profile-card shadow-lg rounded-4 border-0 overflow-hidden">
         <!-- Header -->
         <div class="card-header bg-gradient text-white d-flex align-items-center gap-3">
           <div>
             <h4 class="mb-0 text-gra">{{ userDetails.firstname }} {{ userDetails.lastname }}</h4>
-            <small class="text text-uppercase" style="color: black;">{{ userDetails.role }}</small>
+            <small class="text text-uppercase" style="color: rgb(208, 204, 204);">{{ userDetails.role }}</small>
           </div>
         </div>
 
@@ -23,12 +23,12 @@
               <h6 class="section-title mb-2">Contact Info</h6>
               <p><i class="bi bi-envelope me-2 icon-style"></i>{{ userDetails.email }}</p>
               <p><i class="bi bi-telephone me-2 icon-style"></i>{{ userDetails.phone }}</p>
-              <p><i class="bi bi-building me-2 icon-style"></i>Organization ID: {{ userDetails.organization }}</p>
             </div>
 
             <!-- Account Info -->
             <div class="col-md-6">
               <h6 class="section-title mb-2">Account Details</h6>
+              <p><i class="bi bi-building me-2 icon-style"></i>Organization ID: {{ userDetails.organization }}</p>
               <p><i class="bi bi-person-badge me-2 icon-style"></i>User ID: {{ userDetails._id }}</p>
               <p><i class="bi bi-clock-history me-2 icon-style"></i>Created: {{ userDetails.createdAt | date:'mediumDate' }}</p>
               <p><i class="bi bi-clock me-2 icon-style"></i>Updated: {{ userDetails.updatedAt | date:'mediumDate' }}</p>

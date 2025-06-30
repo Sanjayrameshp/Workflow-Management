@@ -32,7 +32,16 @@ export class MyAccountComponent implements OnInit {
     this.userService.getUserObject().subscribe({
         next:(user)=> {
           this.userObject = user;
-          this.getUserDetails();
+          this.userService.getAuthStatus().subscribe({
+            next:(status) => {
+              this.authStatus = status;
+              if(this.authStatus) {
+                this.getUserDetails();
+              }
+            },error:(error)=> {
+              this.authStatus = false;
+            }
+          })
           
         },
         error:(error)=> {

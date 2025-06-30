@@ -17,7 +17,7 @@
 
 /* Gradient header */
 .card-header.bg-gradient {
-  background: linear-gradient(to right, #3a264f, #1a2538);
+  background: linear-gradient(to right, #3a264f, #1a2538) !important;
   padding: 1rem 1.5rem;
 }
 

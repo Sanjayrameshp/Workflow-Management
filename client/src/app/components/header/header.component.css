@@ -1,10 +1,7 @@
-.app-header {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.header-1 {
+  background: linear-gradient(120deg, #3b82f6, #8736d3, #7426c1);
   color: #f3f4f6;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Baloo 2', sans-serif;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -63,4 +60,17 @@
 
 .dropdown-item {
   cursor: pointer;
+}
+
+.logo img{
+  width: 200px;
+  max-width: 200px;
+}
+.login-btn:hover {
+  color: #000000;
+  font-weight: 600;
+}
+.register-btn:hover {
+  color: #000000;
+  font-weight: 600;
 }

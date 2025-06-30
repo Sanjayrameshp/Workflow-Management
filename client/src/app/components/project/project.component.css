@@ -26,6 +26,22 @@
   }
 }
 
+.btn-section .btn:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Shared button styles */
+.btn-section .btn {
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0.5rem 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  font-size: 0.95rem;
+}
+
 #inviteUserModal .modal-content {
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -104,33 +120,6 @@
 #inviteUserModal .text-danger {
   font-size: 0.9rem;
   margin-top: 0.3rem;
-}
-
-.modal.fade .modal-dialog {
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-  transform: scale(0.95);
-  opacity: 0;
-}
-
-.modal.show .modal-dialog {
-  transform: scale(1);
-  opacity: 1;
-}
-
-.btn-section .btn:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-
-/* Shared button styles */
-.btn-section .btn {
-  font-weight: 500;
-  border-radius: 8px;
-  padding: 0.5rem 1.1rem;
-  display: inline-flex;
-  align-items: center;
-  transition: all 0.3s ease-in-out;
-  font-size: 0.95rem;
 }
 
 /* Invite People - Outline Primary */
@@ -283,11 +272,12 @@
 }
 
 .btn-edit-project {
-  background: linear-gradient(120deg, #6f42c1, #9c3ff3);
-  color: white;
+  background-color: #eef0f3;
+  color: rgb(33, 30, 30);
   border: none;
   padding: 8px 20px;
   border-radius: 6px;
+  font-weight: 600;
 }
 
 .btn-delete-project {
@@ -398,4 +388,77 @@
 .analytics-btn {
   padding-left: 50px !important;
   padding-right: 50px !important;
+}
+
+.users-list {
+  background-color: #5075c7;
+  color: #ffffff;
+  cursor: pointer;
+}
+.users-list:hover {
+  background-color: #638ae0;
+  color: #ffffff;
+}
+
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.task-title {
+  color: #ffffff;
+  border-bottom: 2px solid;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.total-task-number {
+  color: #ffffff;
+  font-weight: 600;
+  text-align: right;
+  font-size: 20px;
+}
+
+/* paginator styles */
+:host ::ng-deep .p-paginator {
+  background-color: transparent !important;
+  border: none !important;
+  color: white !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-page,
+:host ::ng-deep .p-paginator .p-dropdown {
+  background-color: transparent !important;
+  color: white !important;
+  border: 2px solid white !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-page-selected {
+  background-color: white !important;
+  color: black !important;
+  font-weight: 600;
+  border: 2px solid white !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-prev,
+:host ::ng-deep .p-paginator .p-paginator-next,
+:host ::ng-deep .p-paginator .p-paginator-first,
+:host ::ng-deep .p-paginator .p-paginator-last {
+  background-color: rgb(255, 255, 255) !important;
+  color: black !important;
+  border: 2px solid rgb(255, 255, 255) !important;
+}
+
+:host ::ng-deep .p-paginator .p-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  background-color: rgb(147, 135, 135) !important;
+  color: rgb(255, 255, 255) !important;
+  border: 2px solid white !important;
 }

@@ -38,7 +38,9 @@ export class UsersListComponent implements OnInit {
           this.userService.getAuthStatus().subscribe({
             next:(status) => {
               this.authStatus = status;
-              this.getUsersByAdmin();
+              if(this.authStatus) {
+                this.getUsersByAdmin();
+              }
             },error:(error)=> {
               this.authStatus = false;
             }

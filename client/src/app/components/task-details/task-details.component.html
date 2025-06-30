@@ -11,7 +11,7 @@
       </h4>
       <span
         class="badge fs-6 px-3 py-2"
-        [ngClass]="{
+        [ngClass]="{ 
           'bg-success': task.status === 'completed',
           'bg-info text-dark': task.status === 'inprogress',
           'bg-warning text-dark': task.status === 'blocked',
@@ -63,8 +63,8 @@
                 role="progressbar"
                 [style.width.%]="task.progress"
                 [class.bg-success]="task.progress === 100"
-                [class.bg-warning]="task.progress < 100 && task.progress >= 50"
-                [class.bg-danger]="task.progress < 50"
+                [class.bg-warning]="task.progress < 100 && task.progress >= 40"
+                [class.bg-danger]="task.progress < 40"
               >
                 {{ task.progress }}%
               </div>
@@ -117,6 +117,13 @@
         </div>
       </div>
 
+      <div class="row mt-5" *ngIf="task?.customMessage">
+        <div class="info-card bg-light bg-opacity-50 border-0">
+            <h6 class="text-muted"><i class="bi bi-calendar-check me-2"></i>Messages / Instructions</h6>
+            <p class="text-dark">{{ task?.customMessage}}</p>
+          </div>
+      </div>
+
       <!-- Actions -->
       <div class="mt-5 d-flex justify-content-end animate-fade-in">
         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editTaskModal">
@@ -132,13 +139,7 @@
   </div>
 </div>
 
-<!-- Keep your modal code as-is -->
-
-
-<!-- Modal stays the same (as per your request) -->
-<!-- Keep your current modal code here -->
-
-
+<!-- Edit task modal -->
 <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <form [formGroup]="updateForm" (ngSubmit)="updateTask()">
@@ -187,6 +188,22 @@
               *ngIf="updateForm.get('endDate')?.invalid && updateForm.get('endDate')?.touched" class="text-danger mt-1">
                 End Date is required.
               </div>
+          </div>
+          <div class="row" *ngIf="userObject && userObject.role === 'admin'">
+            <div class="col-md-12 mb-3">
+              <label class="form-label">Assign To<span class="text-danger">*</span></label>
+              <select formControlName="assignedTo" class="form-select">
+                <option *ngIf="usersList.length <= 0" disabled>No Users found</option>
+                <option *ngFor="let user of usersList" [value]="user._id">{{ user.firstname }}&nbsp;&nbsp;&nbsp;&nbsp;({{ user.email }})</option>
+              </select>
+              <div *ngIf="updateForm.get('assignedTo')?.invalid && updateForm.get('assignedTo')?.touched" class="text-danger">
+                Please select a user from existing list.
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="form-label">Custom message / instructions</label>
+            <textarea formControlName="customMessage" class="form-control" placeholder="your custom message" rows="3"></textarea>
           </div>
         </div>
 

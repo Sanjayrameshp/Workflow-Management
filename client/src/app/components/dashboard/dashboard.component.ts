@@ -6,21 +6,24 @@ import { Router, RouterLink } from '@angular/router';
 import { UserSevice } from '../../services/user/user-sevice.service';
 import { CalendarModule } from 'primeng/calendar';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterLink, CalendarModule, BreadcrumbComponent],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterLink, CalendarModule, BreadcrumbComponent, PaginatorModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
 
   projectForm!: FormGroup;
+  inviteForm!: FormGroup;
   taskService = inject(TaskService);
   userService = inject(UserSevice)
   @ViewChild('closeBtn') closeBtn!: ElementRef;
   @ViewChild('editModalCloseBtn') editModalCloseBtn!: ElementRef;
+  @ViewChild('inviteClose') inviteClose!: ElementRef;
   projects: any = [];
   userObject : any;
   authStatus : any;
@@ -28,20 +31,23 @@ export class DashboardComponent implements OnInit {
   currentPage:number = 1;
   limit: number = 10;
   totalPages: number = 0;
+  totalProjects: number = 0;
 
   search = '';
   selectedStatus = '';
 
   // Sorting
-  sortBy = 'startDate';
+  sortBy = 'createdAt';
   sortOrder: 'asc' | 'desc' = 'asc';
 
-  statusOptions = ['active', 'cancelled', 'onhold', 'completed'];
+  // statusOptions = ['active', 'cancelled', 'onhold', 'completed'];
+  statusOptions = [{label: 'Active', value: 'active'}, {label: 'Cancelled', value: 'cancelled'}, {label: 'On Hold', value: 'onhold'}, {label: 'Completed', value: 'completed'}]
   
   editForm!: FormGroup;
   selectedProjectId: string = '';
   minDate!: Date;
   breadCrumbItems : any[] = [];
+  searchDebounceTimer: any;
 
   ngOnInit(): void {
     this.minDate = new Date();
@@ -55,7 +61,11 @@ export class DashboardComponent implements OnInit {
       description: new FormControl('',Validators.required),
       startDate: new FormControl('',Validators.required),
       endDate: new FormControl('',Validators.required),
-      status: new FormControl('active'),
+      status: new FormControl('active')
+    });
+
+    this.inviteForm = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email]),
     });
 
     this.editForm = new FormGroup({
@@ -74,7 +84,9 @@ export class DashboardComponent implements OnInit {
           this.userService.getAuthStatus().subscribe({
             next:(status) => {
               this.authStatus = status;
-              this.fetchProjects();
+              if(this.authStatus) {
+                this.fetchProjects();
+              }
             },error:(error)=> {
               this.authStatus = false;
             }
@@ -97,6 +109,8 @@ export class DashboardComponent implements OnInit {
       sortOrder: this.sortOrder,
       status: this.selectedStatus
     }
+    console.log("options >", options);
+    
     this.taskService.showloading(true);
 
     this.taskService.getProjects(options).subscribe({
@@ -105,6 +119,7 @@ export class DashboardComponent implements OnInit {
         console.log("projects > ", JSON.stringify(data));
         this.projects = data.projects;
         this.totalPages = data.meta.totalPages;
+        this.totalProjects = data.meta.total;
         
       },error:(error)=> {
         this.projects = [];
@@ -115,12 +130,12 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  submitForm() {
+  submitProjectForm() {
     if (!this.projectForm.valid) return;
 
     const projectData = this.projectForm.value;
     console.log("projectData, ", projectData);
-
+    this.taskService.showloading(true);
     this.taskService.createProject(projectData).subscribe({
       next:(data:any) => {
         if(data.success) {
@@ -145,11 +160,40 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  onPageChange(page: number): void {
-    this.currentPage = page;
-    this.fetchProjects();
+  inviteUser() {
+    console.log("user invite > ", this.inviteForm.value);
+    if(!this.inviteForm.valid) return;
+
+    this.taskService.showloading(true);
+    this.userService.inviteUser({email : this.inviteForm.value.email}).subscribe({
+      next:(data:any) => {
+        if(data.success) {
+          this.taskService.showloading(false);
+          this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
+          this.inviteClose.nativeElement.click();
+          this.inviteForm.reset();
+        } else {
+          this.taskService.showloading(false);
+          this.taskService.showAlertMessage('error', data.message || 'Error while sending invite mail', 3000);
+          this.inviteClose.nativeElement.click();
+          this.inviteForm.reset();
+        }
+      },
+      error:(error) => {
+        this.taskService.showloading(false);
+        this.taskService.showAlertMessage('error', error.message || 'Error while sending invite mail', 3000);
+        this.inviteClose.nativeElement.click();
+        this.inviteForm.reset();
+      }
+    })
+    
   }
 
+  onPageChange(event: any): void {
+    this.limit = event.rows;
+    this.currentPage = Math.floor(event.first / this.limit) + 1;
+    this.fetchProjects();
+  }
   onSort(field: string): void {
     if (this.sortBy === field) {
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
@@ -160,9 +204,18 @@ export class DashboardComponent implements OnInit {
     this.fetchProjects();
   }
 
-  onSearchChange(): void {
+  onSortChange(): void {
     this.currentPage = 1;
     this.fetchProjects();
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1;
+    clearTimeout(this.searchDebounceTimer);
+
+    this.searchDebounceTimer = setTimeout(()=> {
+      this.fetchProjects();
+    }, 500)
   }
 
   onStatusFilterChange(): void {

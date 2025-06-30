@@ -4,14 +4,13 @@ const bcrypt = require("bcrypt");
 
 const UserSchema = mongoose.Schema({
     organization: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization' },
-    firstname : { type : String, required: true, trim: true, minlength: 2 },
-    lastname : { type : String, required: true, trim: true,  },
+    firstname : { type : String, trim: true, minlength: 2 },
+    lastname : { type : String, trim: true,  },
     email : {
         type: String,
         required: true,
         lowercase: true,
         trim: true,
-        unique: true,
         validate: {
             validator: validator.isEmail,
             message: 'Please provide a valid email address'
@@ -48,8 +47,8 @@ UserSchema.methods.incrementFailedLogin = async function () {
   await this.save();
 };
 
-UserSchema.virtual('isLocked').get(function () {
+UserSchema.methods.isLocked = function () {
   return !!(this.lockUntil && this.lockUntil > Date.now());
-});
+};
 
 module.exports = mongoose.model("User", UserSchema);

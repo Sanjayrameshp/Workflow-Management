@@ -1,18 +1,22 @@
 const User = require('../models/User');
 const Project = require('../models/Project');
+const emailService = require('../services/emailService');
+const mongoose = require('mongoose');
+const Task = require('../models/Tasks')
 
 var createProject = async function(projectData, user) {
     try {
-        const projectFound = await Project.findOne({ name : projectData.name , createdBy : user._id});
+        const projectFound = await Project.findOne({ name : projectData.name , createdBy : user._id, organization: user.organization});
 
         if(projectFound) {
             return { success: false, message : 'Project name is already exist'};
         }
 
         const newProject = new Project({
+            organization: user.organization,
             name : projectData.name,
             description : projectData.description,
-            status : projectData.status,
+            status : 'active',
             startDate : projectData.startDate,
             endDate : projectData.endDate,
             createdBy : user._id
@@ -23,6 +27,8 @@ var createProject = async function(projectData, user) {
         await User.findByIdAndUpdate(user._id, {
             $addToSet: { projects: savedProject._id }
         });
+
+        await emailService.sendProjectCreationEmail(savedProject, user);
         return { success: true, message : 'Project created successfully'}
     } catch (error) {
         return {success: false, message : 'Error while creating new project'}
@@ -36,7 +42,7 @@ var getProjects = async function(options, user) {
             limit = 10,
             search = '',
             status = '',
-            sortBy = 'startDate',
+            sortBy = 'createdAt',
             sortOrder = 'asc'
         } = options;
 
@@ -111,7 +117,149 @@ var projectDetails = async function(projectId, user) {
     }
 }
 
+var projectTasksByStatus = async function (projectId) {
+
+  try {
+    const result = await Task.aggregate([
+      { $match: { project: new mongoose.Types.ObjectId(projectId) } },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    return ({ success:true, message: 'success', result: result});
+  } catch (err) {
+    return ({ success:false, message: 'An error occured', result: null});
+  }
+};
+
+var projectTasksByProgress = async function (projectId) {
+
+  try {
+    const result = await Task.aggregate([
+      { $match: { project: new mongoose.Types.ObjectId(projectId) } },
+      {
+        $group: {
+          _id: "$progress",
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    return ({ success:true, message: 'success', result: result})
+  } catch (err) {
+    return ({ success:false, message: 'An error occured', result: null})
+  }
+};
+
+var projectTasksByPriority = async function (projectId) {
+
+  try {
+   const result = await Task.aggregate([
+      { $match: { project: new mongoose.Types.ObjectId(projectId) } },
+      {
+        $group: {
+          _id: "$priority",
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    return ({ success:true, message: 'success', result: result})
+  } catch (err) {
+    return ({ success:false, message: 'An error occured', result: null})
+  }
+};
+
+var groupTasksByAssignedUser = async (projectId) => {
+
+  try {
+    const result = await Task.aggregate([
+      { $match: { project: new mongoose.Types.ObjectId(projectId) } },
+      {
+        $group: {
+          _id: "$assignedTo",
+          taskCount: { $sum: 1 }
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userInfo"
+        }
+      },
+      {
+        $unwind: {
+          path: "$userInfo",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          userId: "$_id",
+          name: "$userInfo.firstname",
+          email: "$userInfo.email",
+          taskCount: 1
+        }
+      }
+    ]);
+
+    return ({ success:true, message: 'success', result: result})
+  } catch (err) {
+    return ({ success:false, message: 'error occured', result: null})
+  }
+};
+
+var addUserToProject = async function(data) {
+    try {
+    // First, check if user already has the project
+    const existingUser = await User.findOne({
+      _id: new mongoose.Types.ObjectId(data.userId),
+      email: data.email,
+      organization: new mongoose.Types.ObjectId(data.org),
+      projects: new mongoose.Types.ObjectId(data.projectId)
+    });
+
+    if (existingUser) {
+      return { success: true, message: 'Project already assigned to user' };
+    }
+
+    // If not, now find user again and push projectId
+    const user = await User.findOne({
+      _id: new mongoose.Types.ObjectId(data.userId),
+      email: data.email,
+      organization: new mongoose.Types.ObjectId(data.org)
+    });
+
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+
+    user.projects.push(data.projectId);
+    await user.save();
+
+    return { success: true, message: 'Project assigned successfully' };
+  } catch (error) {
+    return { success: false, message: 'Error while assigning project'};
+  }
+}
+
+
 module.exports.createProject = createProject;
 module.exports.getProjects = getProjects;
 module.exports.updateProject = updateProject;
 module.exports.projectDetails = projectDetails;
+module.exports.projectTasksByStatus = projectTasksByStatus;
+module.exports.projectTasksByProgress = projectTasksByProgress;
+module.exports.projectTasksByPriority = projectTasksByPriority;
+module.exports.groupTasksByAssignedUser = groupTasksByAssignedUser;
+module.exports.addUserToProject = addUserToProject;

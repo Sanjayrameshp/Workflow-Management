@@ -13,6 +13,8 @@ import { ChangePasswordComponent } from './components/change-password/change-pas
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { UsersListComponent } from './components/users-list/users-list.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { AboutUsComponent } from './components/about-us/about-us.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 export const routes: Routes = [
     { path : '', component :HomeComponent},
@@ -28,5 +30,7 @@ export const routes: Routes = [
     { path : 'forgot-password', component : ForgotPasswordComponent},
     { path : 'users-list', component : UsersListComponent, canActivate:[adminGuard]},
     { path : 'users-details/:userid', component : UserDetailsComponent, canActivate:[adminGuard]},
+    { path : 'aboutus', component : AboutUsComponent},
+    { path : '**', component: NotFoundComponent}
 
 ];

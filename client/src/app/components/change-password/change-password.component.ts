@@ -20,12 +20,14 @@ export class ChangePasswordComponent implements OnInit {
   private userService = inject(UserSevice);
   private taskService = inject(TaskService);
   breadCrumbItems : any[] = [];
+  userObject: any;
+  authStatus: boolean = false;
 
   changePasswordForm!: FormGroup;
 
   ngOnInit(): void {
     this.changePasswordForm = new FormGroup({
-      email: new FormControl(null, [Validators.required, Validators.email]),
+      email: new FormControl({value :null, disabled :true}, [Validators.required, Validators.email]),
       currentPassword : new FormControl(null, [Validators.required]),
       password: new FormControl('', [Validators.required, Validators.minLength(6), this.passwordStrengthValidator]),
       confirmPassword: new FormControl('', Validators.required)
@@ -33,8 +35,30 @@ export class ChangePasswordComponent implements OnInit {
     
     this.breadCrumbItems = [
       {label: 'Home', route: '/', icon: 'fa fa-home'},
+      {label: 'dashboard', route: '/dashboard'},
       {label: 'Change Password'}
     ];
+
+    this.userService.getUserObject().subscribe({
+        next:(user)=> {
+          this.userObject = user;
+          this.userService.getAuthStatus().subscribe({
+            next:(status) => {
+              this.authStatus = status;
+              if(this.authStatus) {
+                this.changePasswordForm.patchValue({
+                email: this.userObject.email
+              })
+              }
+            },error:(error)=> {
+              this.authStatus = false;
+            }
+          })
+        },
+        error:(error)=> {
+          this.userObject = null;
+      }
+    });
   }
 
   passwordMatchValidator(formGroup: AbstractControl): { [key: string]: boolean } | null {

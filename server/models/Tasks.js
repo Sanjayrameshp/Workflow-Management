@@ -45,6 +45,9 @@ const TaskSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+  },
+  customMessage: {
+    type: String
   }
 }, { timestamps: true });
 

@@ -17,7 +17,7 @@ import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.componen
 export class AnalyticsComponent implements OnInit {
 
   private taskService = inject(TaskService);
-  private userservice = inject(UserSevice)
+  private userService = inject(UserSevice)
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -28,6 +28,7 @@ export class AnalyticsComponent implements OnInit {
   selectedUser : any;
   selectedUsersList :any[] = [];
   breadCrumbItems : any[] = [];
+  authStatus: boolean = false;
 
   tasksByStatus: any[] =[];
   tasksByProgress: any[] =[];
@@ -52,17 +53,26 @@ export class AnalyticsComponent implements OnInit {
       this.projectId = params.get('projectId');
       if(this.projectId) {
 
-        this.userservice.getUserObject().subscribe({
+        this.userService.getUserObject().subscribe({
         next:(user)=> {
           console.log('user > ', user );
           this.userObject = user;
-          if(this.userObject.role === 'admin') {
-            this.getUsersList();
-          } else {
-            this.selectedUser = {...this.userObject}
-            this.selectedUserId = this.userObject._id;
-            this.getAllTasksByUser();
-          }
+          this.userService.getAuthStatus().subscribe({
+            next:(status) => {
+              this.authStatus = status;
+              if(this.authStatus) {
+                if(this.userObject.role === 'admin') {
+                  this.getUsersList();
+                } else {
+                  this.selectedUser = {...this.userObject}
+                  this.selectedUserId = this.userObject._id;
+                  this.getAllTasksByUser();
+                }
+              }
+            },error:(error)=> {
+              this.authStatus = false;
+            }
+          })
 
           },
           error:(error)=> {
@@ -83,7 +93,7 @@ export class AnalyticsComponent implements OnInit {
   }
 
   getUsersList() {
-    this.userservice.getUsersByProject(this.projectId).subscribe({
+    this.userService.getUsersByProject(this.projectId).subscribe({
       next:(users:any) => {
         if(users.success) {
           this.usersList = users.users;
@@ -164,7 +174,7 @@ export class AnalyticsComponent implements OnInit {
           this.taskService.showloading(false);
           this.tasksByProgress = data.result;
           this.progressChartData = {
-            labels: this.tasksByProgress.map((item: any) => item._id),
+            labels: this.tasksByProgress.map((item: any) => item._id?.toString()),
             datasets: [
               {
                 data: this.tasksByProgress.map((item: any) => item.count),

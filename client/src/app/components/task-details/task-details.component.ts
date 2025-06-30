@@ -17,7 +17,7 @@ import { CalendarModule } from 'primeng/calendar';
 export class TaskDetailsComponent implements OnInit {
 
   private taskService = inject(TaskService);
-  private userservice = inject(UserSevice)
+  private userService = inject(UserSevice)
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   taskId:any = '';
@@ -26,6 +26,9 @@ export class TaskDetailsComponent implements OnInit {
   progerssOptions = [0,10,20,30,40,50,60,70,80,90,100];
   breadCrumbItems : any[] = [];
   minDate!: Date;
+  usersList : any[] = [];
+  userObject: any;
+  authStatus: boolean = false;
 
   @ViewChild('editTaskModalClose') editTaskModalClose!: ElementRef;
 
@@ -35,13 +38,31 @@ export class TaskDetailsComponent implements OnInit {
     this.updateForm = new FormGroup({
       status: new FormControl('', Validators.required),
       progress: new FormControl('', [Validators.required, Validators.min(0), Validators.max(100)]),
-      endDate: new FormControl('', Validators.required)
+      endDate: new FormControl('', Validators.required),
+      assignedTo: new FormControl(''),
+      customMessage: new FormControl('')
     });
 
-    this.activatedRoute.paramMap.subscribe((params) => {
-      this.taskId = params.get('taskid');
-      if(this.taskId) {
-        this.getTaskDetails();
+    this.userService.getUserObject().subscribe({
+        next:(user)=> {
+          this.userObject = user;
+          this.userService.getAuthStatus().subscribe({
+            next:(status) => {
+              this.authStatus = status;
+              this.activatedRoute.paramMap.subscribe((params) => {
+                this.taskId = params.get('taskid');
+                if(this.taskId && this.authStatus) {
+                  this.getTaskDetails();
+                }
+              });
+              
+            },error:(error)=> {
+              this.authStatus = false;
+            }
+          })
+        },
+        error:(error)=> {
+          this.userObject = null;
       }
     });
 
@@ -63,6 +84,7 @@ export class TaskDetailsComponent implements OnInit {
             {label: 'Project', route: '/project/' + this.task.project},
             {label: this.task.title}
           ];
+          this.getUsersList();
           
           this.setEditFormField();
           // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
@@ -84,6 +106,7 @@ export class TaskDetailsComponent implements OnInit {
     this.updateForm.get('progress')?.setValue(this.task.progress);
     this.updateForm.get('status')?.setValue(this.task.status);
     this.updateForm.get('endDate')?.setValue(this.task.endDate ? new Date(this.task.endDate) : null);
+    this.updateForm.get('customMessage')?.setValue(this.task.customMessage);
   }
 
   updateTask() {
@@ -110,7 +133,33 @@ export class TaskDetailsComponent implements OnInit {
         this.taskService.showAlertMessage('error', err.message || 'Failed to update', 3000);
         this.updateForm.reset();
         this.editTaskModalClose.nativeElement.click();
+        this.getTaskDetails();
       }
     });
+  }
+
+  getUsersList() {
+    this.userService.getUsersByProject(this.task.project).subscribe({
+      next:(users:any) => {
+        console.log("USERS LIST for task > ", users);
+        
+        if(users.success) {
+          this.usersList.push(...users.users);
+          console.log("LISTTTT > ", this.usersList);
+          
+          if(this.task.assignedTo) {
+            this.updateForm.get('assignedTo')?.setValue(this.task.assignedTo._id);
+          } else if(this.usersList.length > 0) {
+            this.updateForm.get('assignedTo')?.setValue(this.usersList[0]._id);
+          } else{
+
+          }
+        } else {
+          this.usersList = [];
+        }
+      },error:(err)=> {
+        this.usersList= [];
+      }
+    })
   }
 }
