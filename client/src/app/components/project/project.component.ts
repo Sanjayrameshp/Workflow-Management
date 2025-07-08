@@ -152,6 +152,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.taskService.getProjectDetails(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
+          this.project = data.project;
           this.breadCrumbItems = [
             {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
             {label: this.project.name}
@@ -173,6 +174,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   setEditFormField(projectdata:any) {
+
     this.editForm.patchValue({
       name: projectdata.name,
       description: projectdata.description,
@@ -183,6 +185,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   submitTaskForm() {
+    console.log("task > ", this.taskForm.value);
     const taskData = {
       title: this.taskForm.value.title,
       description: this.taskForm.value.description,
@@ -235,6 +238,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       projectId: this.projectId,
       status : this.selectedStatus
     }
+
     this.taskService.showloading(true);
 
     this.taskService.getTasks(options).pipe(takeUntil(this.destroy$)).subscribe({
@@ -254,10 +258,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   searchTasks() {
+    console.log("serarck q-> ", this.search);
     clearTimeout(this.taskSearchDebounce)
     this.taskSearchDebounce = setTimeout(()=> {
       this.getTasks();
     }, 300)
+    
   }
 
   onPageChange(event: any): void {
@@ -269,6 +275,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   getUsersList() {
     this.userService.getUsersByProject(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(users:any) => {
+
         if(users.success) {
           this.usersList = users.users;
           if (this.usersList.length > 0) {
@@ -292,6 +299,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       this.userSearchDebounce = setTimeout(()=> {
         this.userService.searchUserByProject(data).pipe(takeUntil(this.destroy$)).subscribe({
           next:(data:any) => {
+
           if(data.success) {
             this.filteredUsers = data.users;
           } else {
@@ -395,6 +403,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
     this.taskService.projectTasksByStatus(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
+
         if(data.success) {
           this.taskService.showloading(false);
           this.tasksByStatus = data.result?.result || [];
@@ -511,5 +520,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
 
 }
