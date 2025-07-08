@@ -96,7 +96,7 @@ var inviteUser = async function(email, user) {
             adminref: user._id,
             org: user.org
         });
-        const inviteLink = `http://localhost:4200/register-user?token=${token}`;
+        const inviteLink = `https://workflow-management-lilac.vercel.app/register-user?token=${token}`;
 
         await emailService.sendInvitationEmail(email, inviteLink)
         return { success: true, message: 'An user invitation mail has been sent' };
