@@ -89,12 +89,15 @@
   font-weight: 600;
   font-family: "Baloo 2", Sans-serif;
 }
-.create-project-btn {
+.create-project-btn, .user-list-btn, .invite-btn {
   background: #584ecb;
 }
-.create-project-btn:hover {
+.create-project-btn:hover, .user-list-btn:hover, .invite-btn:hover {
   background: #584ecb;
   box-shadow: 5px 2px #584ecb; 
+}
+.user-list-btn, .invite-btn {
+  margin-right: 10px;
 }
 
 .project-card {
@@ -287,4 +290,17 @@
   background-color: rgb(147, 135, 135) !important;
   color: rgb(255, 255, 255) !important;
   border: 2px solid white !important;
+}
+
+@media (max-width: 768px) {
+  .user-list-btn, .invite-btn {
+    margin-right: 4px;
+  }
+  .create-project-btn, .user-list-btn, .invite-btn {
+    margin-top: 6px;
+  }
+  .sort-section {
+    margin-top: 8px;
+  }
+  
 }

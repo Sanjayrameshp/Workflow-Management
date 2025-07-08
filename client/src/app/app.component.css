@@ -40,9 +40,44 @@ body, html {
     pointer-events: none;
 }
 
+::ng-deep .p-message {
+    background-color: rgb(255, 255, 255) !important;
+}
+
+::ng-deep .p-message.p-message-success {
+    border: 2px solid rgb(7, 200, 7);
+}
+::ng-deep .p-message.p-message-info {
+    border: 2px solid rgb(69, 57, 239);
+}
+::ng-deep .p-message.p-message-warn {
+    border: 2px solid rgb(198, 245, 10);
+}
+::ng-deep .p-message.p-message-error {
+    border: 2px solid rgb(195, 7, 7);
+}
+
 .main-body {
     background-color: #eaedfc;
 }
 .content-section{
     min-height: 80vh;
+}
+
+@media (max-width: 768px) {
+    ::ng-deep .p-message {
+        background-color: rgb(255, 255, 255) !important;
+    }
+    ::ng-deep .p-message.p-message-success {
+    border: 2px solid rgb(7, 200, 7);
+    }
+    ::ng-deep .p-message.p-message-info {
+        border: 2px solid rgb(69, 57, 239);
+    }
+    ::ng-deep .p-message.p-message-warn {
+        border: 2px solid rgb(198, 245, 10);
+    }
+    ::ng-deep .p-message.p-message-error {
+        border: 2px solid rgb(195, 7, 7);
+    }
 }

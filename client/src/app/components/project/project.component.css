@@ -238,7 +238,7 @@
 }
 
 .table .btn-outline-primary {
-  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  background: #645bc9;
   color: white;
   border: none;
 }
@@ -355,11 +355,6 @@
   border: none;
 }
 
-.analytics-btn {
-  padding-left: 50px !important;
-  padding-right: 50px !important;
-}
-
 .users-list {
   background-color: #5075c7;
   color: #ffffff;
@@ -429,4 +424,39 @@
   background-color: rgb(147, 135, 135) !important;
   color: rgb(255, 255, 255) !important;
   border: 2px solid white !important;
+}
+
+@media (min-width : 600px) {
+  .analytics-btn, .add-user-btn, .create-task-btn {
+    margin-right: 8px;
+  }
+  .btn-section {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+  }
+  .analytics-btn {
+    padding-left: 50px !important;
+    padding-right: 50px !important;
+  }
+}
+@media (max-width : 600px) {
+  .analytics-btn, .add-user-btn, .create-task-btn {
+    margin-right: 2px;
+  }
+  .btn-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .sort-section {
+    margin-bottom: 8px;
+  }
+  .chart-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 14px;
+  }
 }

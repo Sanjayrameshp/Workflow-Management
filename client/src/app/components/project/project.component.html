@@ -4,14 +4,13 @@
       <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
     </div>
   <div class="row mb-3">
-    <div class="col d-flex justify-content-end align-items-center btn-section">
-      <div class="d-flex gap-2">
+    <div class="col btn-section">
         <button class="btn btn-primary analytics-btn" [routerLink]="['/analytics', projectId]">
           <i class="fa-solid fa-chart-simple"></i>User Analytics
         </button>
         <button
           *ngIf="userObject && userObject.role === 'admin'"
-          class="btn btn-primary"
+          class="btn btn-primary add-user-btn"
           data-bs-toggle="modal"
           data-bs-target="#inviteUserModal"
         >
@@ -19,13 +18,12 @@
         </button>
         <button
           *ngIf="userObject && userObject.role === 'admin'"
-          class="btn btn-primary"
+          class="btn btn-primary create-task-btn"
           data-bs-toggle="modal"
           data-bs-target="#createTaskModal"
         >
           <i class="bi bi-plus-circle me-1"></i> Create Task
         </button>
-      </div>
     </div>
   </div>
 
@@ -111,7 +109,7 @@
         </option>
       </select>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 sort-section">
       <select
         class="form-select"
         [(ngModel)]="sortBy"
@@ -180,7 +178,7 @@
                   <td>{{ task.endDate | date: 'mediumDate' }}</td>
                   <td>{{ task.assignedTo?.firstname || '-' }} &nbsp; {{task.assignedTo?.lastname}}</td>
                   <td><button
-                      class="btn btn-sm btn-outline-primary me-1" style="width: 100%;" [routerLink]="['/task', task._id]">
+                      class="btn btn-sm btn-outline-primary me-1 view-btn" style="width: 100%;" [routerLink]="['/task', task._id]">
                       View
                     </button></td>
                 </tr>

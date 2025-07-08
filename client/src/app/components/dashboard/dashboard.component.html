@@ -14,9 +14,8 @@
         <div class="btn-section">
         <button
         type="button"
-        class="btn btn-primary create-project-btn"
+        class="btn btn-primary user-list-btn"
         *ngIf="userObject && userObject.role === 'admin'"
-        style="margin-right: 10px;"
         [routerLink]="['/users-list']"
       >
         <i class="bi bi-person-lines-fill"></i>
@@ -24,10 +23,9 @@
       </button>
         <button
           *ngIf="userObject && userObject.role === 'admin'"
-          class="btn btn-primary create-project-btn"
+          class="btn btn-primary invite-btn"
           data-bs-toggle="modal"
           data-bs-target="#inviteUserModal"
-          style="margin-right: 10px;"
         >
           <i class="bi bi-person-plus me-1"></i> Invite People
         </button>
@@ -53,8 +51,8 @@
       <h5 class="total-project-number">Total Projects : {{totalProjects}}</h5>
     </div>
   }
-  <div class="row mb-3">
-    <div class="col-md-6 mb-2 mb-md-0">
+  <div class="row mb-3 search-section">
+    <div class="col-md-6 mb-2">
       <input
         type="text"
         [(ngModel)]="search"
@@ -63,7 +61,7 @@
         placeholder="Search by project name..."
       />
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 filter-section">
       <select
         class="form-select w-100"
         [(ngModel)]="selectedStatus"
@@ -76,7 +74,7 @@
       </select>
     </div>
 
-    <div class="col-md-2 mb-2 mb-md-0">
+    <div class="col-md-2 mb-2 sort-section">
     <select class="form-select" [(ngModel)]="sortBy" (change)="onSortChange()">
       <option value="createdAt">Created At</option>
       <option value="startDate">Start Date</option>
