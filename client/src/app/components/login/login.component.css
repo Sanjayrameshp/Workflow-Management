@@ -1,17 +1,18 @@
+.header h2, .header p{
+  color: #584ecb;
+}
 .login-wrapper {
-  /* min-height: 100vh; */
   padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
   background-size: cover;
   font-family: 'Baloo 2', sans-serif;
 }
 
 .login-card {
   position: relative;
-  background: rgba(20, 20, 35, 0.4);
+  background: #584ecb;
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 1.5rem;
   padding: 3rem;

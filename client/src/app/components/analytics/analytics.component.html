@@ -2,10 +2,9 @@
   <div class="row mb-3">
       <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
     </div>
-  <!-- select Users  -->
    <div class="row" *ngIf="userObject && userObject.role === 'admin'">
     <div class="col-md-6 mb-3">
-      <label class="form-label" style="color: #ffffff;">User Name</label>
+      <label class="form-label" style="color: #000000">User Name</label>
       <select  class="form-select" [(ngModel)]="selectedUserId">
         <option *ngFor="let user of selectedUsersList" [value]="user._id" (click)="getAllTasksByUser()">{{user.firstname}}&nbsp;{{user.lastname}}&nbsp;({{user.email}})</option>
       </select>
@@ -16,7 +15,6 @@
         </button>
     </div>
    </div>
-  <!-- User Details Card -->
   <div class="card shadow-sm mb-4 border-0 rounded-4 p-3 animate__animated animate__fadeIn">
     <h4 class="mb-2">User Details</h4>
     <div class="row">
@@ -26,7 +24,6 @@
     </div>
   </div>
 
-  <!-- Task Summary Card -->
 <div class="card shadow-sm mb-4 border-0 rounded-4 p-3 animate__animated animate__fadeInUp">
   <h4 class="mb-3">Task Summary</h4>
   <div class="row text-center">
@@ -88,19 +85,17 @@
 
 
   <!-- Charts Section -->
-    <!-- Tasks by Status -->
     <div class="row chart-center">
-        <div class="col-md-4" *ngIf="statusChartData.labels?.length; else noStatusData">
-      <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
-        <h5 class="text-center mb-3">Tasks by Status</h5>
-        <canvas baseChart [data]="statusChartData" [type]="statusChartType" [width]="400" [height]="200"></canvas>
+          <div class="col-md-4" *ngIf="statusChartData.labels?.length; else noStatusData">
+            <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
+            <h5 class="text-center mb-3">Tasks by Status</h5>
+            <canvas baseChart [data]="statusChartData" [type]="statusChartType" [width]="400" [height]="200"></canvas>
+          </div>
       </div>
-    </div>
-    <ng-template #noStatusData>
-      <div class="col-md-4 text-center fallback-box">No status data found</div>
-    </ng-template>
+      <ng-template #noStatusData>
+        <div class="col-md-4 text-center fallback-box">No status data found</div>
+      </ng-template>
 
-    <!-- Tasks by Progress -->
     <div class="col-md-4" *ngIf="progressChartData.labels?.length; else noProgressData">
       <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
         <h5 class="text-center mb-3">Tasks by Progress (%)</h5>
@@ -122,21 +117,15 @@
     </ng-template>
     </div>
 
-    <!-- Tasks by Priority -->
     <div class="row chart-center" style="margin-top: 20px;">
-
-    <!-- Tasks by Month -->
-    <div class="col-md-4" *ngIf="monthChartData.labels?.length; else noMonthData">
-      <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
-        <h5 class="text-center mb-3">Tasks by Month</h5>
-        <canvas baseChart [data]="monthChartData" [type]="monthChartType" [width]="400" [height]="200"></canvas>
+      <div class="col-md-4" *ngIf="monthChartData.labels?.length; else noMonthData">
+        <div class="card shadow-sm border-0 rounded-4 p-3 animate__animated animate__fadeIn">
+          <h5 class="text-center mb-3">Tasks by Month</h5>
+          <canvas baseChart [data]="monthChartData" [type]="monthChartType" [width]="400" [height]="200"></canvas>
+        </div>
       </div>
+      <ng-template #noMonthData>
+        <div class="col-md-4 text-center fallback-box">No month data found</div>
+      </ng-template>
     </div>
-    <ng-template #noMonthData>
-      <div class="col-md-4 text-center fallback-box">No month data found</div>
-    </ng-template>
-    </div>
-
-
-
 </div>

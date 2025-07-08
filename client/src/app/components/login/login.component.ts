@@ -48,13 +48,11 @@ export class LoginComponent implements OnInit {
         next:(response:any)=> {
           this.taskService.showloading(false);
           let data = response.organizations;
-          console.log("org data > ", data);
           
           if(data && data.length > 1) {
             this.isMutipleOrg = true;
             for(let org of data) {
               this.orgsList.push(org.organization);
-              console.log("org list > ", this.orgsList);
             }
           } else {
             this.taskService.showloading(false);
@@ -66,7 +64,6 @@ export class LoginComponent implements OnInit {
           this.taskService.showloading(false);
           this.selectedOrg = null;
           this.orgsList = [];
-          console.log("login error > ", error);
         }
       })
     }
@@ -74,14 +71,11 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin() {
-    console.log("selested org < ", this.selectedOrg);
-    
     const loginData = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password,
       organization: this.selectedOrg ?  this.selectedOrg : null
     };
-    console.log("login data > ", loginData);
     
     this.userService.onLogin(loginData).subscribe({
       next:(response:any)=> {
@@ -94,9 +88,7 @@ export class LoginComponent implements OnInit {
           this.taskService.showAlertMessage('error', response.message || 'Unable to login', 3000);
         }
       }, error:(error)=> {
-        this.taskService.showloading(false);
-        console.log("login error > ", error);
-        
+        this.taskService.showloading(false);   
         this.taskService.showAlertMessage('error', error.message || 'Unable to login', 3000);
       }
     })

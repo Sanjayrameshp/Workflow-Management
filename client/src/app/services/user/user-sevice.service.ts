@@ -16,12 +16,7 @@ export class UserSevice {
   private currentUserSubject = new BehaviorSubject<any | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor() { 
-    const token = localStorage.getItem('jw_token');
-    if (token) {
-      this.getUserObject().subscribe();
-    }
-  }
+  constructor() { }
 
   sendSignupOTP(email :string) {
     return this.http.post(expressapi.sendSignupOTP, {email});

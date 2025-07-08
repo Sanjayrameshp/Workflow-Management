@@ -61,11 +61,7 @@ export class TaskService {
   updateProject(projectData :any) {
     return this.http.post(expressapi.updateProject, { projectData });
   }
-
-  // getAllTasksByUser(data :any) {
-  //   return this.http.post(expressapi.getAllTasksByUser, data);
-  // }
-
+  
   getTasksByStatus(data :any) {
     return this.http.post(expressapi.getTasksByStatus, data);
   }

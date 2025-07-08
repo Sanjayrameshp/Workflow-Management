@@ -1,10 +1,10 @@
-import { Component, OnInit, inject, ViewChild, ElementRef} from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Component, OnInit, inject, ViewChild, ElementRef, OnDestroy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task/task.service';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserSevice } from '../../services/user/user-sevice.service';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-details',
@@ -12,11 +12,12 @@ import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.componen
   templateUrl: './user-details.component.html',
   styleUrl: './user-details.component.css'
 })
-export class UserDetailsComponent implements OnInit {
+export class UserDetailsComponent implements OnInit, OnDestroy {
 
   private taskService = inject(TaskService);
   private userService = inject(UserSevice);
   private activatedRoute = inject(ActivatedRoute);
+  private destroy$ = new Subject<void>();
 
   @ViewChild('deleteUserClose') deleteUserClose!: ElementRef;
   @ViewChild('removeProjectClose') removeProjectClose!: ElementRef;
@@ -30,12 +31,11 @@ export class UserDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      {label: 'Home', route: '/', icon: 'fa fa-home'},
-      {label: 'Dashboard', route: '/dashboard'},
+      {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
       {label: 'User Details'}
     ];
 
-    this.userService.getUserObject().subscribe({
+    this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.loggedUser = user;
           
@@ -60,13 +60,11 @@ export class UserDetailsComponent implements OnInit {
   }
 
   getUserDetails() {
-    this.userService.getUserDetailsForAdmin(this.userId).subscribe({
+    this.userService.getUserDetailsForAdmin(this.userId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("pro <", JSON.stringify(data));
         if(data.success) {
           this.userData = data.user;
           this.taskService.showloading(false);
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.userData = null;
           this.taskService.showloading(false);
@@ -83,7 +81,6 @@ export class UserDetailsComponent implements OnInit {
   }
 
   removeFromProject(projectId: any) {
-    console.log("Remove project:", projectId);
     if(!this.userData) {
       this.taskService.showAlertMessage('info', 'You have no authorization to remove this project', 3000);
       return;
@@ -93,7 +90,7 @@ export class UserDetailsComponent implements OnInit {
       projectId
     }
 
-    this.userService.removeFromProject(data).subscribe({
+    this.userService.removeFromProject(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);
@@ -114,14 +111,13 @@ export class UserDetailsComponent implements OnInit {
   }
 
   deleteUser() {
-    console.log("Delete user:", this.userId);
 
     if(!this.userData) {
       this.taskService.showAlertMessage('info', 'You have no authorization to delete this user', 3000);
       return;
     }
 
-    this.userService.deleteUser(this.userId).subscribe({
+    this.userService.deleteUser(this.userId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);
@@ -141,5 +137,9 @@ export class UserDetailsComponent implements OnInit {
     })
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }

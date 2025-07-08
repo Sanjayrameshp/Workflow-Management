@@ -23,8 +23,6 @@ router.post('/createTask', AdminAuth ,async (req, res) => {
             res.send({ success: false, message: createTask.message || 'Error while creating new task' });
         }
     } catch (error) {
-        console.log("errror >> ", error);
-        
         return res.send({ success: false, message : error.message || 'Error while creating new task' })
     }
     
@@ -34,7 +32,6 @@ router.get('/getTasks', userAuth ,async (req, res) => {
     try {
         
         const user = req.user;
-        console.log("req.query > ", req.query);
         
         if(!user)  return res.send({success: false, message : 'Authorization failed'});
         const getTasks = await taskService.getTasks(req.query, user);
@@ -104,14 +101,9 @@ router.post('/getTasksByStatus', userAuth ,async (req, res) => {
         if(!req.user) {
             return res.send({success: false, message : 'Authentication failed'});
         }
-        console.log("req-bodyyyyyy > ", req.body);
-        
         const data = req.body;
 
         const getTasks = await taskService.groupTasksByStatus(data);
-        console.log("get data > ", getTasks);
-        
-
         if(getTasks.success) {
             res.send({ success: true, message: getTasks.message || 'Task fetched successfully', result : getTasks.result});
         } else {
@@ -128,8 +120,6 @@ router.post('/getTasksByProgress', userAuth ,async (req, res) => {
         if(!req.user) {
             return res.send({success: false, message : 'Authentication failed'});
         }
-        console.log("req-bodyyyyyy > ", req.body);
-        
         const data = req.body;
 
         const getTasks = await taskService.groupTasksByProgress(data);
@@ -150,8 +140,6 @@ router.post('/getTasksByPriority', userAuth ,async (req, res) => {
         if(!req.user) {
             return res.send({success: false, message : 'Authentication failed'});
         }
-        console.log("req-bodyyyyyy > ", req.body);
-        
         const data = req.body;
 
         const getTasks = await taskService.groupTasksByPriority(data);

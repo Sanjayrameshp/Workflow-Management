@@ -22,7 +22,6 @@
   color: #000;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;

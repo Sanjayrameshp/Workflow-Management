@@ -112,8 +112,6 @@ var registerNewUser = async function(userData) {
 
         const validateToken = await InviteToken.findOne({ token : hashedToken, verified : false });
 
-        console.log("Validate token > ", validateToken);
-        
         if(!validateToken) {
             return { success : false, message : 'Token validation failed'}
         }
@@ -146,7 +144,6 @@ var registerNewUser = async function(userData) {
 
         return { success: true, message: 'User created successfully' }
     } catch (error) {
-        console.error('Error creating user:', error);
         return { success: false, message: error.message || 'error while saving User' };
     }
 }
@@ -159,9 +156,6 @@ var getUsersByProject = async function(projectId) {
         }
 
         const users = await User.find({ projects: projectId });
-        console.log("users >> ", users);
-        
-
         return { success: true, message: 'User created successfully', users }
     } catch (error) {
         console.error('Error creating user:', error);
@@ -176,7 +170,6 @@ var getUserDetails = async function(userData) {
 
         return { success: true, user : user, message: 'User fetched successfully' }
     } catch (error) {
-        console.error('Error creating user:', error);
         return { success: false, message: error.message || 'error while fetching User', user : null };
     }
 }
@@ -185,15 +178,12 @@ var changePassword = async function(passwordData, userData) {
     try {
 
         const user = await User.findOne({ _id: new mongoose.Types.ObjectId(userData._id), email: passwordData.email});
-        console.log("user found >> ", user);
-        
 
         if (!user) {
             return { success: false, message: 'User not found' };
         }
 
         const isMatch = await user.comparePasswords(passwordData.currentPassword);
-        console.log("isMatch >> ", isMatch);
         if (!isMatch) {
             return { success: false, message: 'Current password is incorrect' };
         }

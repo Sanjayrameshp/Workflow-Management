@@ -1,62 +1,158 @@
-/* Animations */
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-in-out;
+.task-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.animate-slide-up {
-  animation: slideUp 0.7s ease-in-out;
+.task-card {
+  background-color: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  overflow: hidden;
+  animation: fadeIn 0.4s ease;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #d5d0d0;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.task-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  color: #000;
+}
+
+.task-status {
+  font-size: 0.875rem;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  text-transform: capitalize;
+}
+
+.task-badge {
+  font-weight: 600;
+}
+
+.task-status.completed { background: #d1e7dd; color: #056e3d !important; }
+.task-status.inprogress { background: #cff4fc; color: #055160 !important; }
+.task-status.blocked { background: #fff3cd; color: #a00808 !important; }
+.task-status.started { background: #e2e3e5; color: #bcc608 !important; }
+
+.bi-circle-fill.completed { color: #056e3d !important; }
+.bi-circle-fill.inprogress { color: #055160 !important; }
+.bi-circle-fill.blocked { color: #a00808 !important; }
+.bi-circle-fill.started { color: #bcc608 !important; }
+
+.task-body {
+  padding: 1.5rem;
+}
+
+.task-body h6 {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.task-body p {
+  margin: 0 0 1rem 0;
+  font-size: 0.925rem;
+}
+
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.section-box {
+  background-color: #6273f7;
+  padding: 1rem;
+  border-radius: 10px;
+  color: #ffffff;
+}
+
+.section-box h6,
+.section-box p,
+.section-box span {
+  color: #ffffff;
+}
+
+.task-badge {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.task-badge.high { background-color: #f8d7da; color: #842029 !important; }
+.task-badge.medium { background-color: #fff3cd; color: #664d03 !important; }
+.task-badge.low { background-color: #d1e7dd; color: #0f5132 !important; }
+
+.task-progress {
+  background-color: #444;
+  border-radius: 20px;
+  height: 8px;
+  width: 100%;
+  margin-top: 0.5rem;
+  position: relative;
+}
+
+.task-progress .bar {
+  height: 100%;
+  border-radius: 20px;
+  background-color: #ffffff;
+  transition: width 0.3s ease;
+}
+
+.progress-label {
+  font-size: 0.8rem;
+  color: #ffffff;
+  margin-top: 0.25rem;
+}
+
+.btn-edit {
+  background: #584ecb;
+  box-shadow: 0 8px 20px rgba(156, 63, 243, 0.4);
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-edit:hover {
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.under-line {
+  text-decoration: underline;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1rem;
+  color: #b91c1c;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
 
-/* Gradient Header */
-.gradient-header {
-  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
-}
-
-/* Info Cards */
-.info-card {
-  background: #fff;
-  padding: 1rem 1.2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.info-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
-}
-
-.border-start-4 {
-  border-left-width: 4px !important;
-}
-
-/* Progress Bar inside card */
-.progress {
-  background-color: #f1f1f1;
-  border-radius: 30px;
-}
-
-/* Modal Styles: Keep as is */
 .modal.fade .modal-dialog {
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
   transform: scale(0.95);
@@ -68,10 +164,6 @@
   opacity: 1;
 }
 
-.bg-gradient-task {
-  background: linear-gradient(135deg, #3b82f6, #9333ea, #ec4899);
-}
-
 #editTaskModal .modal-content {
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
@@ -80,6 +172,8 @@
 
 #editTaskModal .modal-header {
   border-bottom: none;
+  background: #584ecb;
+  color: white;
 }
 
 #editTaskModal .modal-footer {

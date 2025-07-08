@@ -19,13 +19,22 @@
 }
 
 .pdf-btn button{
-  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  background: #584ecb;
   color: #fff;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .pdf-btn button:hover {
-  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
   box-shadow: 0 8px 20px rgba(156, 63, 243, 0.4);
   transform: translateY(-2px);
+}
+
+.fallback {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 70%;
+  color: #ffffff;
+  font-weight: 600;
 }

@@ -6,8 +6,6 @@ var sendSignUpOtp = async function(email, otp) {
         const subject = 'Email Verfication';
         const message = 'Please find the verification OTP below'
         const sendOtp = await sendmail.sendOtp(email, otp, subject, message);
-
-        console.log("sendOTP > ", sendOtp);
         return { success: true, message: 'An OTP has been sent to your email' };
     } catch (error) {
         return{ success: false, message: 'Error while sending the OTP' };
@@ -31,8 +29,6 @@ var sendForgotPasswordOTP = async function(email, otp) {
         const subject = 'Forgot Password';
         const message = 'Please find the verification OTP below'
         const sendOtp = await sendmail.sendOtp(email, otp, subject, message);
-
-        console.log("sendOTP > ", sendOtp);
         return { success: true, message: 'An OTP has been sent to your email' };
     } catch (error) {
         return{ success: false, message: 'Error while sending the OTP' };
@@ -44,8 +40,6 @@ var sendWelcomeEmail = async function (user) {
         const subject = 'Welcome to Quantivio-';
         const message = 'Please find the verification OTP below'
         const sendOtp = await sendmail.sendWelcomeEmail(user.email, subject);
-
-        console.log("sendOTP > ", sendOtp);
         return { success: true, message: 'An OTP has been sent to your email' };
     } catch (error) {
         return{ success: false, message: 'Error while sending the OTP' };
@@ -56,8 +50,6 @@ var sendProjectCreationEmail = async function (project, user) {
     try {
         const subject = 'New Project Created';
         const sendOtp = await sendmail.sendProjectCreationEmail(project, user, subject);
-
-        console.log("sendOTP > ", sendOtp);
         return { success: true, message: 'An OTP has been sent to your email' };
     } catch (error) {
         return{ success: false, message: 'Error while sending the OTP' };

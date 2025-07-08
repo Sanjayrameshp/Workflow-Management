@@ -1,5 +1,5 @@
 .gradient-header {
-  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  background-color: #584ecb;
   animation: fadeIn 1s ease-in-out;
 }
 
@@ -32,7 +32,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Common Confirm Modal Styles */
 .modal-confirm .modal-content {
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -40,7 +39,6 @@
   background-color: #ffffff;
 }
 
-/* Gradient Header for Delete */
 #confirmDeleteUserModal .modal-header {
   background: linear-gradient(120deg, #ef4444, #f97316, #fb923c);
   color: white;
@@ -48,7 +46,6 @@
   border-top-right-radius: 15px;
 }
 
-/* Gradient Header for Remove */
 #confirmRemoveProjectModal .modal-header {
   background: linear-gradient(120deg, #facc15, #fbbf24, #fcd34d);
   color: #1f2937;
@@ -56,13 +53,11 @@
   border-top-right-radius: 15px;
 }
 
-/* Modal Title */
 .modal-confirm .modal-title {
   font-weight: 600;
   font-size: 1.3rem;
 }
 
-/* Modal Body */
 .modal-confirm .modal-body {
   background-color: #f9fafb;
   padding: 2rem;
@@ -70,7 +65,6 @@
   color: #374151;
 }
 
-/* Modal Footer */
 .modal-confirm .modal-footer {
   background-color: #f1f5f9;
   border-bottom-left-radius: 15px;
@@ -78,7 +72,6 @@
   padding: 1rem 1.5rem;
 }
 
-/* Buttons */
 .modal-confirm .btn-danger,
 .modal-confirm .btn-warning {
   border-radius: 8px;
@@ -112,7 +105,6 @@
   border: none;
 }
 
-/* Fade animation */
 .modal.fade .modal-dialog {
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
   transform: scale(0.95);

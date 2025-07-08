@@ -4,78 +4,71 @@
       <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
     </div>
     <div class="row justify-content-center">
-      <div class="col-xl-8 col-lg-10 register-card p-4">
-
-        <div class="row justify-content-center mb-4">
-          <div class="col-md-8 text-center">
-            <h2 class="fw-bold text-white">Register an Organization</h2>
-          </div>
-        </div>
+      <div class="col-lg-7 register-card py-3 px-0">
 
         <div class="row justify-content-center">
-          <div class="col-md-8 col-lg-8" *ngIf="!otpSent">
+          <div class="col-md-10 col-lg-8" *ngIf="!otpSent">
             <form [formGroup]="adminRegForm" (ngSubmit)="sendSignupOTP()" class="p-4 rounded">
 
-              <!-- 🟦 Organization Details Section -->
+              <h2 class="fw-bold text-white pb-5">Register Your Organization</h2>
+
               <div class="mb-4 border-bottom pb-3">
                 <h5 class="fw-semibold mb-3 text-white">Organization Info</h5>
 
                 <div class="mb-3">
                   <label for="orgname" class="form-label text-white">Organization Name</label>
                   <input type="text" id="orgname" formControlName="orgname" class="form-control" [ngClass]="{'is-invalid': isInvalid('orgname')}"/>
-                  <div *ngIf="isInvalid('orgname', 'required')" class="invalid-feedback">Organization name is required</div>
+                  <small *ngIf="isInvalid('orgname', 'required')" class="invalid-feedback">Organization name is required</small>
                 </div>
 
                 <div class="mb-3">
                   <label for="description" class="form-label text-white">Description</label>
                   <textarea id="description" formControlName="description" class="form-control" rows="3" [ngClass]="{'is-invalid': isInvalid('description')}"></textarea>
-                  <div *ngIf="isInvalid('description', 'required')" class="invalid-feedback">Description is required</div>
+                  <small *ngIf="isInvalid('description', 'required')" class="invalid-feedback">Description is required</small>
                 </div>
               </div>
 
-              <!-- 🟩 Personal Info -->
               <div class="mb-4 border-bottom pb-3">
                 <h5 class="fw-semibold mb-3 text-white">Personal Info</h5>
 
                 <div class="mb-3">
                   <label for="firstname" class="form-label text-white">First Name</label>
                   <input type="text" id="firstname" formControlName="firstname" class="form-control" [ngClass]="{'is-invalid': isInvalid('firstname')}"/>
-                  <div *ngIf="isInvalid('firstname', 'required')" class="invalid-feedback">First name is required</div>
+                  <small *ngIf="isInvalid('firstname', 'required')" class="invalid-feedback">First name is required</small>
                 </div>
 
                 <div class="mb-3">
                   <label for="lastname" class="form-label text-white">Last Name</label>
                   <input type="text" id="lastname" formControlName="lastname" class="form-control" [ngClass]="{'is-invalid': isInvalid('lastname')}"/>
-                  <div *ngIf="isInvalid('lastname', 'required')" class="invalid-feedback">Last name is required</div>
+                  <small *ngIf="isInvalid('lastname', 'required')" class="invalid-feedback">Last name is required</small>
                 </div>
 
                 <div class="mb-3">
                   <label for="phone" class="form-label text-white">Phone</label>
                   <input type="number" id="phone" formControlName="phone" class="form-control" [ngClass]="{'is-invalid': isInvalid('phone')}"/>
-                  <div *ngIf="isInvalid('phone', 'required')" class="invalid-feedback">Phone number is required</div>
-                  <div *ngIf="isInvalid('phone', 'minlength')" class="invalid-feedback">Phone number must be at least 6 digits</div>
+                  <small *ngIf="isInvalid('phone', 'required')" class="invalid-feedback">Phone number is required</small>
+                  <small *ngIf="isInvalid('phone', 'minlength')" class="invalid-feedback">Phone number must be at least 6 digits</small>
                 </div>
 
                 <div class="mb-3">
                   <label for="email" class="form-label text-white">Email</label>
                   <input type="email" id="email" formControlName="email" class="form-control" [ngClass]="{'is-invalid': isInvalid('email')}"/>
-                  <div *ngIf="isInvalid('email', 'required')" class="invalid-feedback">Email is required</div>
-                  <div *ngIf="isInvalid('email', 'email')" class="invalid-feedback">Enter a valid email</div>
+                  <small *ngIf="isInvalid('email', 'required')" class="invalid-feedback">Email is required</small>
+                  <small *ngIf="isInvalid('email', 'email')" class="invalid-feedback">Enter a valid email</small>
                 </div>
               </div>
 
-              <!-- 🟥 Security -->
               <div class="mb-4">
                 <h5 class="fw-semibold mb-3 text-white">Security</h5>
 
                 <div class="mb-3">
                   <label for="password" class="form-label text-white">Password</label>
                   <input id="password" type="password" formControlName="password" class="form-control" [ngClass]="{'is-invalid': isInvalid('password')}"/>
-                  <div *ngIf="isInvalid('password', 'required')" class="invalid-feedback">Password is required</div>
-                  <small [ngClass]="{'text-danger': isInvalid('password', 'minlength') && passwordControl?.dirty, 'text-success': isPasswordValid('password', 'minlength') && passwordControl?.dirty}" class="d-block mt-1">
+                  <small *ngIf="isInvalid('password', 'required')" class="invalid-feedback">Password is required</small>
+                  <small [ngClass]="{'invalid-feedback': isInvalid('password', 'minlength') && passwordControl?.dirty, 'feedback-text-success': isPasswordValid('password', 'minlength') && passwordControl?.dirty}" class="d-block mt-1">
                     Password must be at least 6 characters
                   </small>
-                  <small [ngClass]="{'text-danger': isInvalid('password', 'weakPassword') && passwordControl?.dirty, 'text-success': isPasswordValid('password', 'weakPassword') && passwordControl?.dirty}" class="d-block">
+                  <small [ngClass]="{'invalid-feedback': isInvalid('password', 'weakPassword') && passwordControl?.dirty, 'feedback-text-success': isPasswordValid('password', 'weakPassword') && passwordControl?.dirty}" class="d-block">
                     Must include uppercase, lowercase, number, and special character (&#64;, #, *, $)
                   </small>
                 </div>
@@ -88,33 +81,51 @@
                            'is-invalid': isInvalid('confirmPassword') || 
                                          (adminRegForm.hasError('passwordMismatch') && adminRegForm.get('confirmPassword')?.touched)
                          }"/>
-                  <div *ngIf="isInvalid('confirmPassword', 'required')" class="invalid-feedback">Confirm Password is required</div>
-                  <div *ngIf="adminRegForm.hasError('passwordMismatch') && adminRegForm.get('confirmPassword')?.touched"
+                  <small *ngIf="isInvalid('confirmPassword', 'required')" class="invalid-feedback">Confirm Password is required</small>
+                  <small *ngIf="adminRegForm.hasError('passwordMismatch') && adminRegForm.get('confirmPassword')?.touched"
                        class="invalid-feedback">
                     Passwords do not match
-                  </div>
+                  </small>
                 </div>
               </div>
 
               <div class="d-grid">
-                <button type="submit" class="btn btn-primary" [disabled]="adminRegForm.invalid">Register</button>
+                <button type="submit" class="btn btn-light btn-lg text-dark" [disabled]="adminRegForm.invalid">Register</button>
               </div>
             </form>
           </div>
 
           <!-- OTP Section -->
-          <div class="col-md-8 col-lg-8" *ngIf="otpSent">
-            <form [formGroup]="otpForm" class="p-4 rounded bg-light">
-              <div class="mb-3">
-                <label for="otp" class="form-label" style="color: black;">Enter OTP</label>
-                <input id="otp" type="text" formControlName="otp" class="form-control"/>
+          <div class="col-md-8 col-lg-8 py-4" *ngIf="otpSent">
+            <div class="text-center pb-3">Enter the OTP below</div>
+            <form [formGroup]="otpForm" class="text-center">
+              <div class="d-flex justify-content-center gap-2">
+                <ng-container formArrayName="otp">
+                  <input
+                    *ngFor="let ctrl of otpControls; let i = index"
+                    [formControlName]="i"
+                    maxlength="1"
+                    class="form-control text-center"
+                    style="width: 45px; font-size: 1.5rem;"
+                    (input)="onInput(i, $event)"
+                    (keydown)="onKeyDown(i, $event)"
+                    type="text"
+                  />
+                </ng-container>
               </div>
-              <div>
-                <button class="btn btn-success" (click)="submitAdminRegForm()" [disabled]="otpForm.get('otp')?.invalid">Verify OTP</button>
+
+              <button class="btn btn-success mt-3" (click)="submitAdminRegForm()" [disabled]="otpForm.invalid">
+                Verify OTP
+              </button>
+
+              <div class="mt-2">
+                <small class="text-muted text-white">Note*: The OTP will expire after 5 minutes.</small>
               </div>
-              <small style="color: black; margin-top: 10px;">note* : The OTP will expire after 5 minutes.</small>
+
+              <div class="resend mt-3">
+                <a (click)="sendSignupOTP()">Click here to resend OTP</a>
+              </div>
             </form>
-            <div class="resend mt-3"><a (click)="sendSignupOTP()">Click here to resend OTP</a></div>
           </div>
         </div>
 

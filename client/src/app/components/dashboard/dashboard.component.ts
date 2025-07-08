@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, inject, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task/task.service';
@@ -7,6 +7,7 @@ import { UserSevice } from '../../services/user/user-sevice.service';
 import { CalendarModule } from 'primeng/calendar';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { Subject, takeUntil } from 'rxjs';
 
 
 @Component({
@@ -15,12 +16,14 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   projectForm!: FormGroup;
   inviteForm!: FormGroup;
   taskService = inject(TaskService);
-  userService = inject(UserSevice)
+  userService = inject(UserSevice);
+  private destroy$ = new Subject<void>();
+
   @ViewChild('closeBtn') closeBtn!: ElementRef;
   @ViewChild('editModalCloseBtn') editModalCloseBtn!: ElementRef;
   @ViewChild('inviteClose') inviteClose!: ElementRef;
@@ -76,7 +79,7 @@ export class DashboardComponent implements OnInit {
       status: new FormControl(''),
     });
 
-    this.userService.getUserObject().subscribe({
+    this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
           console.log("header-user > ", this.userObject);
@@ -113,7 +116,7 @@ export class DashboardComponent implements OnInit {
     
     this.taskService.showloading(true);
 
-    this.taskService.getProjects(options).subscribe({
+    this.taskService.getProjects(options).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         this.taskService.showloading(false);
         console.log("projects > ", JSON.stringify(data));
@@ -136,7 +139,7 @@ export class DashboardComponent implements OnInit {
     const projectData = this.projectForm.value;
     console.log("projectData, ", projectData);
     this.taskService.showloading(true);
-    this.taskService.createProject(projectData).subscribe({
+    this.taskService.createProject(projectData).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);
@@ -165,7 +168,7 @@ export class DashboardComponent implements OnInit {
     if(!this.inviteForm.valid) return;
 
     this.taskService.showloading(true);
-    this.userService.inviteUser({email : this.inviteForm.value.email}).subscribe({
+    this.userService.inviteUser({email : this.inviteForm.value.email}).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);
@@ -242,7 +245,7 @@ export class DashboardComponent implements OnInit {
       projectId : this.selectedProjectId
     }
 
-    this.taskService.updateProject(data).subscribe({
+    this.taskService.updateProject(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);
@@ -270,5 +273,10 @@ export class DashboardComponent implements OnInit {
 
   deleteProject(projectId: string) {
     
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

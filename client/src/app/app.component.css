@@ -1,3 +1,13 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.main-body {
+  width: 100%;
+}
+
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -31,9 +41,7 @@
 }
 
 .main-body {
-    background: linear-gradient(120deg, #3b82f6, #a855f7, #c084fc);
-    /* background: linear-gradient(120deg, #f8f9fb, #dad3e0, #8e49d3); */
-    /* background-color: #7e67f7; */
+    background-color: #eaedfc;
 }
 .content-section{
     min-height: 80vh;

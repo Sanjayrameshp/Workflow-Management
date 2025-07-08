@@ -3,20 +3,14 @@
       <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
     </div>
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-
-    <!-- Gradient Header -->
     <div class="card-header text-white gradient-header py-4">
       <h4 class="mb-0">User List</h4>
     </div>
 
     <div class="card-body p-0 bg-light">
-
-      <!-- No Users Fallback -->
       <div *ngIf="usersList && usersList.length === 0" class="p-4 text-center text-muted">
         No users found.
       </div>
-
-      <!-- User Table -->
       <div *ngIf="usersList && usersList.length > 0" class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">

@@ -18,7 +18,6 @@ router.post('/sendSignupOTP' ,async (req, res) => {
     try {
         const email = req.body.email;
 
-        
         if(!email) {
             return res.status(401).send({ success: false, message: 'Error while sending OTP' })
         }
@@ -114,12 +113,9 @@ router.post('/onLogin', async (req, res) => {
         const user =  await User.findOne(query);
 
         if(!user) return res.send({ success: false, message: 'User not found !!!' });
-        console.log("USER  > ", user);
 
         if (user.isLocked()) {
-            console.log("inside lock");
             const minutes = Math.ceil((user.lockUntil - Date.now()) / 60000);
-            console.log("minutes > ", minutes);
             return res.send({
                 success: false,
                 message: `Account is locked. Try again in ${minutes} minute(s)`
@@ -129,7 +125,6 @@ router.post('/onLogin', async (req, res) => {
         const isMatch = await user.comparePasswords(loginData.password);
 
         if (!isMatch) {
-            console.log("inside irc");
             const remainingAttempts = parseInt(5 - parseInt(user.failedLoginAttempts));
             
             await user.incrementFailedLogin();
@@ -147,7 +142,7 @@ router.post('/onLogin', async (req, res) => {
         organization: user.organization
         };
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
 
         return res.send({ success: true, user: {id: user._id, email: user.email, role: user.role}, token : token})
     } catch (error) {
@@ -175,23 +170,18 @@ router.post('/inviteUser', adminAuth, async (req, res) => {
   try {
     const email = req.body.email.trim().toLowerCase();
     const user = req.user;
-    console.log("email > ", email);
-    console.log("user > ", user);
     if(!user) {
         return res.send({success: false, message: 'Authentication failed'});
     }
 
     const existUser = await User.findOne({email : email, organization: user.organization});
-    console.log("existUser > ", existUser);
     
     if(existUser) {
-        console.log("insideee");
         return res.send({success: false, message: 'User already exist'});
     }
 
     const inviteUser =await userService.inviteUser(email, user);
-    console.log("inviteUser > ", inviteUser);
-    
+
     if(inviteUser.success) {
         return res.send({ success: true, message: 'Invite has been sent' });
     } else {
@@ -208,7 +198,6 @@ router.post('/validateInvitationToken', async (req, res) => {
     const hashed = crypto.createHash('sha256').update(token).digest('hex');
 
     const validateToken = InviteToken.findOne({ token: hashed, expiresAt: { $gt: Date.now() }, verified: false});
-    console.log("validateToken > ", validateToken);
     
     if(!validateToken) {
         return res.send({success: false, message: 'Session Expired'});
@@ -222,9 +211,6 @@ router.post('/validateInvitationToken', async (req, res) => {
 router.post('/signUpUser' ,async (req, res) => {
     try {
         const userData = req.body;
-        console.log("Req-body > ", req.body);
-        
-
         const regUser = await userService.registerNewUser(userData);
         if(regUser.success) {
             res.send({ success: true, message: regUser.message || 'Successfully created User' });
@@ -241,7 +227,6 @@ router.post('/signUpUser' ,async (req, res) => {
 router.post('/getUsersByProject' ,async (req, res) => {
     try {
         const projectId = req.body.projectId;
-        console.log("Req-body > ", req.body);
         if(!projectId) {
             return res.send({ success: false, message: 'Invalid project data' });
         }
@@ -262,7 +247,6 @@ router.post('/getUsersByProject' ,async (req, res) => {
 router.get('/getUserDetails', userAuth ,async (req, res) => {
     try {
         const userData = req.user;
-        console.log("Req-body > ", req.body);
 
         const userDetails = await userService.getUserDetails(userData);
         if(userDetails.success) {
@@ -280,9 +264,7 @@ router.get('/getUserDetails', userAuth ,async (req, res) => {
 router.post('/changePassword', userAuth ,async (req, res) => {
     try {
         const userData = req.user;
-        const paswordData = req.body.passwordData
-        console.log("Req-body > ", req.body);
-
+        const paswordData = req.body.passwordData;
         if(!userData) {
             return res.send({ success: false, message: 'Authorization failed'})
         }
@@ -337,9 +319,6 @@ router.post('/submitForgotPassword' ,async (req, res) => {
                             verified: false,
                             type: 'forgotpassword'
                         });
-
-        console.log("OTP > ", otpDoc);
-        
 
         if (!otpDoc || otpDoc.otp !== hashedInputOtp) {
             return res.send({ success: false, message: 'Invalid OTP or OTP expired' });

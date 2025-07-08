@@ -61,7 +61,6 @@
   width: auto;
 }
 
-/* ----------- Animations ----------- */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -80,7 +79,6 @@
   animation: slideUp 1s ease forwards;
 }
 
-/* Animation delays */
 .delay-1 {
   animation-delay: 0.3s;
 }

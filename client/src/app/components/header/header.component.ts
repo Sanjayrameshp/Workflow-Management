@@ -20,7 +20,6 @@ export class HeaderComponent implements OnInit {
     this.userService.getUserObject().subscribe({
         next:(user)=> {
           this.userObject = user;
-          console.log("header-user > ", this.userObject);
           
           this.userService.getAuthStatus().subscribe({
             next:(status) => {

@@ -7,25 +7,21 @@
 
     @if (userDetails) { 
       <div class="card profile-card shadow-lg rounded-4 border-0 overflow-hidden">
-        <!-- Header -->
         <div class="card-header bg-gradient text-white d-flex align-items-center gap-3">
           <div>
-            <h4 class="mb-0 text-gra">{{ userDetails.firstname }} {{ userDetails.lastname }}</h4>
-            <small class="text text-uppercase" style="color: rgb(208, 204, 204);">{{ userDetails.role }}</small>
+            <h4 class="mb-0 text-white">{{ userDetails.firstname }} {{ userDetails.lastname }}</h4>
+            <small class="text text-white text-uppercase" style="color: rgb(208, 204, 204);">{{ userDetails.role }}</small>
           </div>
         </div>
 
-        <!-- Body -->
         <div class="card-body">
           <div class="row mb-4">
-            <!-- Contact Info -->
             <div class="col-md-6">
               <h6 class="section-title mb-2">Contact Info</h6>
               <p><i class="bi bi-envelope me-2 icon-style"></i>{{ userDetails.email }}</p>
               <p><i class="bi bi-telephone me-2 icon-style"></i>{{ userDetails.phone }}</p>
             </div>
 
-            <!-- Account Info -->
             <div class="col-md-6">
               <h6 class="section-title mb-2">Account Details</h6>
               <p><i class="bi bi-building me-2 icon-style"></i>Organization ID: {{ userDetails.organization }}</p>
@@ -35,7 +31,6 @@
             </div>
           </div>
 
-          <!-- Projects -->
           <h6 class="section-title mb-3">Assigned Projects</h6>
           <div class="row g-3">
             @for (project of userDetails.projects; track project._id) {

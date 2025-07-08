@@ -5,12 +5,11 @@
     </div>
     <div class="row justify-content-center mb-4">
       <div class="col-md-10 text-center">
-        <h2 class="fw-bold text-white">User Registration</h2>
-        <p class="text-light">Complete the form below to register your account.</p>
+        <h2 class="main-text-color">User Registration</h2>
+        <p class="main-text-color">Complete the form below to register your account.</p>
       </div>
     </div>
 
-    <!-- Loading State -->
     <div class="row" *ngIf="!showForm">
       <div class="col-md-12 text-center">
         <div class="spinner-border text-light" role="status"></div>
@@ -18,12 +17,10 @@
       </div>
     </div>
 
-    <!-- Registration Form -->
     <div class="row justify-content-center" *ngIf="showForm">
       <div class="col-md-10 col-lg-8">
         <form [formGroup]="userRegForm" (ngSubmit)="registerUser()" class="register-card">
 
-          <!-- Personal Info -->
           <div class="mb-4">
             <h5 class="fw-semibold border-bottom pb-3 text-light text-center">
               <i class="bi bi-person-circle me-2"></i>Personal Info
@@ -59,8 +56,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Security Info -->
           <div class="mb-4">
             <h5 class="fw-semibold border-bottom pb-2 text-light">
               <i class="bi bi-shield-lock me-2"></i>Security
@@ -94,7 +89,6 @@
             </div>
           </div>
 
-          <!-- Submit Button -->
           <div class="d-grid">
             <button type="submit" class="btn btn-light btn-lg text-dark" [disabled]="userRegForm.invalid">
               <i class="bi bi-person-plus me-2"></i> Register

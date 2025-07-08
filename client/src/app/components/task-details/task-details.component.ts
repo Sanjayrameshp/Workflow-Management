@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, inject, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task/task.service';
@@ -6,6 +6,7 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { UserSevice } from '../../services/user/user-sevice.service';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
 import { CalendarModule } from 'primeng/calendar';
+import { Subject, takeUntil } from 'rxjs';
 
 
 @Component({
@@ -14,12 +15,12 @@ import { CalendarModule } from 'primeng/calendar';
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.css'
 })
-export class TaskDetailsComponent implements OnInit {
+export class TaskDetailsComponent implements OnInit, OnDestroy {
 
   private taskService = inject(TaskService);
   private userService = inject(UserSevice)
   private activatedRoute = inject(ActivatedRoute);
-  private router = inject(Router);
+  private destroy$ = new Subject<void>();
   taskId:any = '';
   task : any;
   updateForm!: FormGroup;
@@ -43,7 +44,7 @@ export class TaskDetailsComponent implements OnInit {
       customMessage: new FormControl('')
     });
 
-    this.userService.getUserObject().subscribe({
+    this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
           this.userService.getAuthStatus().subscribe({
@@ -71,23 +72,19 @@ export class TaskDetailsComponent implements OnInit {
   getTaskDetails() {
     let taskId = this.taskId;
     this.taskService.showloading(true);
-    this.taskService.getTaskDetails(taskId).subscribe({
+    this.taskService.getTaskDetails(taskId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("task > ", data);
-        
         if(data.success) {
           this.taskService.showloading(false);
           this.task = data.task;
           this.breadCrumbItems = [
-            {label: 'Home', route: '/', icon: 'fa fa-home'},
-            {label: 'Dashboard', route: '/dashboard'},
+            {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
             {label: 'Project', route: '/project/' + this.task.project},
             {label: this.task.title}
           ];
           this.getUsersList();
           
           this.setEditFormField();
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.task = null
           this.taskService.showloading(false);
@@ -111,15 +108,11 @@ export class TaskDetailsComponent implements OnInit {
 
   updateTask() {
     if (this.updateForm.invalid) return;
-    const updatedData = this.updateForm.value;
-    console.log("this.updateForm.value >", this.updateForm.value);
-    
+    const updatedData = this.updateForm.value;  
 
     this.taskService.showloading(true);
-    this.taskService.updateTask(this.taskId, updatedData).subscribe({
+    this.taskService.updateTask(this.taskId, updatedData).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        console.log("res- update > ", res);
-        
         this.taskService.showloading(false);
         if (res.success) {
           this.taskService.showAlertMessage('success', res.message || 'Task updated', 3000);
@@ -139,13 +132,11 @@ export class TaskDetailsComponent implements OnInit {
   }
 
   getUsersList() {
-    this.userService.getUsersByProject(this.task.project).subscribe({
+    this.userService.getUsersByProject(this.task.project).pipe(takeUntil(this.destroy$)).subscribe({
       next:(users:any) => {
-        console.log("USERS LIST for task > ", users);
         
         if(users.success) {
           this.usersList.push(...users.users);
-          console.log("LISTTTT > ", this.usersList);
           
           if(this.task.assignedTo) {
             this.updateForm.get('assignedTo')?.setValue(this.task.assignedTo._id);
@@ -161,5 +152,10 @@ export class TaskDetailsComponent implements OnInit {
         this.usersList= [];
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

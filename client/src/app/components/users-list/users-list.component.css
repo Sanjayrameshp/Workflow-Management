@@ -1,6 +1,6 @@
 /* Gradient header style */
 .gradient-header {
-  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  background-color: #584ecb;
   animation: fadeIn 0.8s ease-in-out;
 }
 
@@ -24,7 +24,7 @@ ul {
   border-radius: 5px;
   padding: 4px 20px;
   color: #ffffff;
-  background: linear-gradient(120deg, #1e2736, #9c3ff3, #331453);
+  background-color: #584ecb;
   border: none;
   transition: all 0.2s ease-in-out;
 }

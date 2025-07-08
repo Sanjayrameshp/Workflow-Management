@@ -1,10 +1,11 @@
-import { Component, OnInit, inject, ViewChild, ElementRef} from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Component, OnInit, inject, OnDestroy} from '@angular/core';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task/task.service';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { UserSevice } from '../../services/user/user-sevice.service';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-users-list',
@@ -12,12 +13,12 @@ import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.componen
   templateUrl: './users-list.component.html',
   styleUrl: './users-list.component.css'
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent implements OnInit, OnDestroy {
 
   private taskService = inject(TaskService);
   private userService = inject(UserSevice);
-  private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
+  private destroy$ = new Subject<void>();
 
   userObject : any;
   authStatus: boolean = false;
@@ -26,16 +27,13 @@ export class UsersListComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      {label: 'Home', route: '/', icon: 'fa fa-home'},
-      {label: 'Dashboard', route: '/dashboard'},
+      {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
       {label: 'Users List'}
     ];
-    this.userService.getUserObject().subscribe({
+    this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
-          console.log("comp-user > ", this.userObject);
-          
-          this.userService.getAuthStatus().subscribe({
+          this.userService.getAuthStatus().pipe(takeUntil(this.destroy$)).subscribe({
             next:(status) => {
               this.authStatus = status;
               if(this.authStatus) {
@@ -54,13 +52,11 @@ export class UsersListComponent implements OnInit {
 
   getUsersByAdmin() {
     this.taskService.showloading(true);
-    this.userService.getUsersByAdmin().subscribe({
+    this.userService.getUsersByAdmin().pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("pro <", JSON.stringify(data));
         if(data.success) {
           this.usersList = data.users;
           this.taskService.showloading(false);
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.usersList = [];
           this.taskService.showloading(false);
@@ -77,6 +73,11 @@ export class UsersListComponent implements OnInit {
 
   viewUser(user:any) {
     this.router.navigate(['/users-details', user._id])
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }

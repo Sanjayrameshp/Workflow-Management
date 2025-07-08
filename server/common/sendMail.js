@@ -9,7 +9,6 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendOtp(toMail,otp, subject, message) {
-  console.log("inide mail> ", toMail, message);
 
   const htmlContent = `
   <!DOCTYPE html>
@@ -69,8 +68,7 @@ async function sendOtp(toMail,otp, subject, message) {
 }
 
 async function sendInviteMail(toMail, subject, registerUrl) {
-  console.log("Sending invitation to:", toMail);
-
+  
   const htmlContent = `
     <!DOCTYPE html>
     <html>

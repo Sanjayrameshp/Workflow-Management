@@ -1,10 +1,10 @@
-import { Component, OnInit, inject, ViewChild, ElementRef} from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Component, OnInit, inject, OnDestroy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task/task.service';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { UserSevice } from '../../services/user/user-sevice.service';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-my-account',
@@ -12,12 +12,11 @@ import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.componen
   templateUrl: './my-account.component.html',
   styleUrl: './my-account.component.css'
 })
-export class MyAccountComponent implements OnInit {
+export class MyAccountComponent implements OnInit, OnDestroy {
 
   private taskService = inject(TaskService);
   private userService = inject(UserSevice)
-  private activatedRoute = inject(ActivatedRoute);
-  private router = inject(Router);
+  private destroy$ = new Subject<void>();
 
   userObject: any;
   authStatus : boolean = false;
@@ -26,10 +25,10 @@ export class MyAccountComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      {label: 'Home', route: '/', icon: 'fa fa-home'},
+      {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
       {label: 'My Account'}
     ];
-    this.userService.getUserObject().subscribe({
+    this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
           this.userService.getAuthStatus().subscribe({
@@ -53,13 +52,11 @@ export class MyAccountComponent implements OnInit {
 
   getUserDetails() {
     this.taskService.showloading(true);
-    this.userService.getUserDetails().subscribe({
+    this.userService.getUserDetails().pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
-          console.log("pro <", JSON.stringify(data));
           this.userDetails = data.user;
           this.taskService.showloading(false);
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.taskService.showloading(false);
           this.userDetails = null;
@@ -72,6 +69,11 @@ export class MyAccountComponent implements OnInit {
         this.taskService.showAlertMessage('error', error.message || 'Error while fetching user', 3000);
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }

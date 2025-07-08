@@ -221,7 +221,6 @@ var groupTasksByAssignedUser = async (projectId) => {
 
 var addUserToProject = async function(data) {
     try {
-    // First, check if user already has the project
     const existingUser = await User.findOne({
       _id: new mongoose.Types.ObjectId(data.userId),
       email: data.email,
@@ -232,8 +231,7 @@ var addUserToProject = async function(data) {
     if (existingUser) {
       return { success: true, message: 'Project already assigned to user' };
     }
-
-    // If not, now find user again and push projectId
+    
     const user = await User.findOne({
       _id: new mongoose.Types.ObjectId(data.userId),
       email: data.email,

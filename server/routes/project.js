@@ -67,8 +67,6 @@ router.post('/updateProject', AdminAuth ,async (req, res) => {
 router.post('/getProjectDetails', userAuth ,async (req, res) => {
     try {
         const projectId = req.body.projectId;
-        console.log("req >> ", req.body);
-        
 
         const projectDetails = await projectService.projectDetails(projectId, req.user);
         if( projectDetails.success) {

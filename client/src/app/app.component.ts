@@ -15,18 +15,15 @@ import { UserSevice } from './services/user/user-sevice.service';
 })
 export class AppComponent implements OnInit{
   private taskService = inject(TaskService);
-  private userservice = inject(UserSevice);
+  private userService = inject(UserSevice);
   messages = computed(() => this.taskService.getAlertMessages());
   isLoading = computed(() => this.taskService.isLoading());
 
   ngOnInit(): void {
-    const user = this.userservice.getUserObject().subscribe({
-      next:(data)=> {
-        console.log(data);
-        
-      }
-    });
-    console.log(user);
+    const token = localStorage.getItem('jw_token');
+    if (token) {
+      this.userService.getUserObject().subscribe();
+    };
     
   }
 }

@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer');
 
 var createTask = async function(taskData, user) {
     try {
-      console.log("taskData >> ", taskData);
+
         const newTask = new Task({
             title : taskData.title,
             description : taskData.description,
@@ -24,7 +24,6 @@ var createTask = async function(taskData, user) {
         return { success: true, message: 'Task created successfully' }
     
     } catch (error) {
-      console.log("errror 22 >> ", error);
         return { success: fasle, message: error.message || 'Error while creating new task' }
     }
 }
@@ -72,7 +71,6 @@ var getTasks = async function(options, user) {
                                         .limit(limit).populate('assignedTo'),
                                     Task.countDocuments(filter)
                                 ]);
-                                console.log("TASKSSS > ", tasks);
                                 
         return { success: true, message: 'Successfully fetched tasks', data: tasks, meta: {
                                                                                             total,
@@ -83,8 +81,6 @@ var getTasks = async function(options, user) {
                                                                                         }}
         
     } catch (error) {
-        console.log("error > ", error);
-        
         return {success: false, message : 'Error while fetching tasks', data: [], meta: {
                                                                                             total :0,
                                                                                             page :1,
@@ -135,8 +131,6 @@ var updateTask = async function(taskId, taskData) {
         return { success: true, message: 'Task updated successfully' }
     
     } catch (error) {
-        console.log("err > ". error);
-        
         return { success: false, message: error.message || 'Error while updating task' }
     }
 }
@@ -347,8 +341,6 @@ var generatePdf = async function (data) {
         </style>
       </head>
       <body>
-
-        <!-- Watermark Overlay -->
         <div class="watermark-container">
           ${[...Array(5)].map((_, i) =>
             [...Array(3)].map((_, j) =>
@@ -431,7 +423,6 @@ var generatePdf = async function (data) {
     return pdfBuffer;
 
   } catch (error) {
-    console.error('Error generating PDF:', error);
     return null;
   }
 };

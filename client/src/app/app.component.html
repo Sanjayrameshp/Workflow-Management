@@ -2,20 +2,23 @@
   <i class="pi pi-spin pi-cog"></i>
 </div>
 <p-messages class="message" [value]="messages()" />
-<div class="container-fluid main-body">
-  <div class="row">
-    <div class="col-md-12 col-sm-12">
+<div class="container-fluid main-body px-0 py-0">
+  <div class="row mx-0">
+    <div class="col-12 px-0 py-0">
       <app-header></app-header>
     </div>
   </div>
-  <div class="row content-section">
-    <div class="col-md-12 col-sm-12">
-      <router-outlet />
+
+  <div class="row content-section mx-0">
+    <div class="col-12 px-0 py-0">
+      <router-outlet></router-outlet>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-12 col-sm-12">
+
+  <div class="row mx-0">
+    <div class="col-12 px-0 py-0">
       <app-footer></app-footer>
     </div>
   </div>
 </div>
+

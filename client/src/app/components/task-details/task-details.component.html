@@ -1,143 +1,88 @@
-<div class="container py-5">
-  <div class="row mb-3">
-      <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12">
+      <app-breadcrumb [items]="breadCrumbItems" class="mb-4"></app-breadcrumb>
     </div>
-  <div *ngIf="task" class="card shadow-lg border-0 rounded-4 overflow-hidden animate-fade-in">
-
-    <!-- Header -->
-    <div class="card-header text-white gradient-header d-flex justify-content-between align-items-center py-4">
-      <h4 class="mb-0">
-        <i class="bi bi-kanban me-2"></i> {{ task.title }}
-      </h4>
-      <span
-        class="badge fs-6 px-3 py-2"
-        [ngClass]="{ 
-          'bg-success': task.status === 'completed',
-          'bg-info text-dark': task.status === 'inprogress',
-          'bg-warning text-dark': task.status === 'blocked',
-          'bg-light text-dark': task.status === 'started'
-        }"
-      >
-        {{ task.status | titlecase }}
-      </span>
-    </div>
-
-    <!-- Body -->
-    <div class="card-body px-5 py-4 bg-white animate-slide-up">
-
-      <!-- Description -->
-      <div *ngIf="task.description" class="mb-4">
-        <h6 class="fw-bold text-primary mb-2"><i class="bi bi-card-text me-2"></i>Description</h6>
-        <p class="text-muted">{{ task.description }}</p>
-      </div>
-
-      <!-- Info Grid -->
-      <div class="row g-4">
-        <!-- Priority -->
-        <div class="col-md-4">
-          <div class="info-card border-start-4"
-            [ngClass]="{
-              'border-danger': task.priority === 'high',
-              'border-warning': task.priority === 'medium',
-              'border-success': task.priority === 'low'
-            }">
-            <h6 class="text-muted"><i class="bi bi-flag-fill me-2"></i>Priority</h6>
-            <span class="badge rounded-pill px-3 py-2"
-              [ngClass]="{
-                'bg-danger': task.priority === 'high',
-                'bg-warning text-dark': task.priority === 'medium',
-                'bg-success': task.priority === 'low'
-              }">
-              {{ task.priority | titlecase }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Progress -->
-        <div class="col-md-4">
-          <div class="info-card border-start-4 border-info">
-            <h6 class="text-muted"><i class="bi bi-bar-chart-fill me-2"></i>Progress</h6>
-            <div class="progress mt-2" style="height: 22px;">
-              <div
-                class="progress-bar progress-bar-striped progress-bar-animated"
-                role="progressbar"
-                [style.width.%]="task.progress"
-                [class.bg-success]="task.progress === 100"
-                [class.bg-warning]="task.progress < 100 && task.progress >= 40"
-                [class.bg-danger]="task.progress < 40"
-              >
-                {{ task.progress }}%
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Status -->
-        <div class="col-md-4">
-          <div class="info-card border-start-4 border-secondary">
-            <h6 class="text-muted"><i class="bi bi-info-circle-fill me-2"></i>Status</h6>
-            <p class="fw-semibold text-capitalize mt-2 mb-0">{{ task.status }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Dates -->
-      <div class="row mt-4 g-4">
-        <div class="col-md-6">
-          <div class="info-card bg-light bg-opacity-50 border-0">
-            <h6 class="text-muted"><i class="bi bi-calendar-event me-2"></i>Start Date</h6>
-            <p class="text-dark">{{ task.startDate | date: 'mediumDate' }}</p>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-card bg-light bg-opacity-50 border-0">
-            <h6 class="text-muted"><i class="bi bi-calendar-check me-2"></i>End Date</h6>
-            <p class="text-dark">{{ task.endDate | date: 'mediumDate' }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Users -->
-      <div class="row mt-4 g-4">
-        <div class="col-md-6">
-          <div class="info-card bg-info bg-opacity-10 border-0">
-            <h6 class="text-muted"><i class="bi bi-person-check me-2"></i>Assigned To</h6>
-            <p class="text-dark mb-0">
-              {{ task.assignedTo?.firstname || '—' }} {{ task.assignedTo?.lastname }}
-            </p>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-card bg-success bg-opacity-10 border-0">
-            <h6 class="text-muted"><i class="bi bi-person-fill-gear me-2"></i>Created By</h6>
-            <p class="text-dark mb-0">
-              {{ task.createdBy?.firstname || '—' }} {{ task.createdBy?.lastname }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="row mt-5" *ngIf="task?.customMessage">
-        <div class="info-card bg-light bg-opacity-50 border-0">
-            <h6 class="text-muted"><i class="bi bi-calendar-check me-2"></i>Messages / Instructions</h6>
-            <p class="text-dark">{{ task?.customMessage}}</p>
-          </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="mt-5 d-flex justify-content-end animate-fade-in">
-        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editTaskModal">
-          <i class="bi bi-pencil me-1"></i> Update Task
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Not Found -->
-  <div *ngIf="!task" class="alert alert-danger text-center mt-4 animate-fade-in">
-    <i class="bi bi-exclamation-triangle-fill me-2"></i> Task not found.
   </div>
 </div>
+<div class="task-container">
+  <ng-container *ngIf="task; else notFound">
+    <div class="task-card animate-fade-in">
+      <div class="task-header">
+        <h2 class="task-title"><i class="bi bi-kanban me-2"></i>{{ task.title }}</h2>
+        <span class="task-status" [ngClass]="task.status">{{ task.status | titlecase }}</span>
+      </div>
+
+      <div class="task-body">
+        <section *ngIf="task.description" class="section-box">
+          <h6 class="under-line"><i class="bi bi-card-text me-2"></i>Description</h6>
+          <p>{{ task.description }}</p>
+        </section>
+
+        <section class="task-grid section-box mt-3">
+          <div>
+            <h6 class="under-line"><i class="bi bi-flag me-2"></i>Priority</h6>
+            <span class="task-badge" [ngClass]="task.priority">{{ task.priority }}</span>
+          </div>
+          <div>
+            <h6 class="under-line"><i class="bi bi-speedometer me-2"></i>Progress</h6>
+            <div class="task-progress">
+              <div class="bar" [style.width.%]="task.progress"></div>
+            </div>
+            <span class="progress-label">{{ task.progress }}%</span>
+          </div>
+          <div>
+            <h6 class="under-line"><i class="bi bi-info-circle me-2"></i>Status</h6>
+            <span class="d-flex "><i class="bi bi-circle-fill" [ngClass]="task.status"></i><p class="text-capitalize ml-2">{{ task.status }}</p></span>
+          </div>
+        </section>
+
+        <section class="task-grid mt-4">
+          <div class="section-box">
+            <h6 class="under-line"><i class="bi bi-calendar me-2"></i>Start Date</h6>
+            <p>{{ task.startDate | date: 'mediumDate' }}</p>
+          </div>
+          <div class="section-box">
+            <h6 class="under-line"><i class="bi bi-calendar-check me-2"></i>End Date</h6>
+            <p>{{ task.endDate | date: 'mediumDate' }}</p>
+          </div>
+        </section>
+
+        <section class="task-grid mt-4">
+          <div class="section-box">
+            <h6 class="under-line"><i class="bi bi-person me-2"></i>Assigned To</h6>
+            <p>{{ task.assignedTo?.firstname || '—' }} {{ task.assignedTo?.lastname }}</p>
+          </div>
+          <div class="section-box">
+            <h6 class="under-line"><i class="bi bi-person-gear me-2"></i>Created By</h6>
+            <p>{{ task.createdBy?.firstname || '—' }} {{ task.createdBy?.lastname }}</p>
+          </div>
+        </section>
+
+        <section *ngIf="task.customMessage" class="section-box mt-4">
+          <h6 class="under-line"><i class="bi bi-chat-dots me-2"></i>Message / Instructions</h6>
+          <p>{{ task.customMessage }}</p>
+        </section>
+
+        <div class="text-end mt-5">
+          <button class="btn-edit" data-bs-toggle="modal" data-bs-target="#editTaskModal">
+            <i class="bi bi-pencil me-1"></i> Edit Task
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #notFound>
+    <div class="empty-state animate-fade-in">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> Task not found.
+    </div>
+  </ng-template>
+</div>
+
+
+
+
 
 <!-- Edit task modal -->
 <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task/task.service';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -7,6 +7,7 @@ import { ChartData, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-analytics',
@@ -14,12 +15,13 @@ import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.componen
   templateUrl: './analytics.component.html',
   styleUrl: './analytics.component.css'
 })
-export class AnalyticsComponent implements OnInit {
+export class AnalyticsComponent implements OnInit, OnDestroy {
 
   private taskService = inject(TaskService);
   private userService = inject(UserSevice)
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
+  private destroy$ = new Subject<void>();
 
   projectId : any = '';
   userObject : any;
@@ -49,15 +51,14 @@ export class AnalyticsComponent implements OnInit {
   
 
   ngOnInit(): void {
-    this.activatedRoute.paramMap.subscribe((params) => {
+    this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.projectId = params.get('projectId');
       if(this.projectId) {
 
-        this.userService.getUserObject().subscribe({
+        this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
-          console.log('user > ', user );
           this.userObject = user;
-          this.userService.getAuthStatus().subscribe({
+          this.userService.getAuthStatus().pipe(takeUntil(this.destroy$)).subscribe({
             next:(status) => {
               this.authStatus = status;
               if(this.authStatus) {
@@ -85,26 +86,21 @@ export class AnalyticsComponent implements OnInit {
     });
 
     this.breadCrumbItems = [
-      {label: 'Home', route: '/', icon: 'fa fa-home'},
-      {label: 'Dashboard', route: '/dashboard'},
+      {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
       {label: 'Analytics'}
     ];
     
   }
 
   getUsersList() {
-    this.userService.getUsersByProject(this.projectId).subscribe({
+    this.userService.getUsersByProject(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(users:any) => {
         if(users.success) {
           this.usersList = users.users;
-          console.log("user list-analyt > ", this.usersList);
           
           this.selectedUsersList = this.usersList.filter((item)=> {
             return item.role !== 'admin'
           });
-
-          console.log("selected usr list > ", this.selectedUsersList);
-          
 
           if(this.selectedUsersList.length > 0) {
             this.selectedUser = this.selectedUsersList[0];
@@ -133,10 +129,8 @@ export class AnalyticsComponent implements OnInit {
   getTasksByStatus() {
     let data = { projectId : this.projectId, userId: this.selectedUserId};
 
-    this.taskService.getTasksByStatus(data).subscribe({
-      next:(data:any) => {
-        console.log("res > ", JSON.stringify(data));
-        
+    this.taskService.getTasksByStatus(data).pipe(takeUntil(this.destroy$)).subscribe({
+      next:(data:any) => { 
         if(data.success) {
           this.taskService.showloading(false);
           this.tasksByStatus = data.result;
@@ -150,7 +144,6 @@ export class AnalyticsComponent implements OnInit {
             },
           ],
         };
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.taskService.showloading(false);
           this.taskService.showAlertMessage('error', data.message || 'Error while fetching task', 3000);
@@ -166,9 +159,8 @@ export class AnalyticsComponent implements OnInit {
   getTasksByProgress() {
     let data = { projectId : this.projectId, userId: this.selectedUserId};
 
-    this.taskService.getTasksByProgress(data).subscribe({
+    this.taskService.getTasksByProgress(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("res > ", JSON.stringify(data));
         
         if(data.success) {
           this.taskService.showloading(false);
@@ -183,7 +175,6 @@ export class AnalyticsComponent implements OnInit {
             ],
           };
           
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.taskService.showloading(false);
           this.taskService.showAlertMessage('error', data.message || 'Error while fetching task', 3000);
@@ -199,9 +190,8 @@ export class AnalyticsComponent implements OnInit {
   getTasksByPriority() {
     let data = { projectId : this.projectId, userId: this.selectedUserId};
 
-    this.taskService.getTasksByPriority(data).subscribe({
+    this.taskService.getTasksByPriority(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("res > ", JSON.stringify(data));
         
         if(data.success) {
           this.taskService.showloading(false);
@@ -215,7 +205,6 @@ export class AnalyticsComponent implements OnInit {
               },
             ],
           };
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.taskService.showloading(false);
           this.taskService.showAlertMessage('error', data.message || 'Error while fetching task', 3000);
@@ -231,10 +220,8 @@ export class AnalyticsComponent implements OnInit {
   getTasksByMonth() {
     let data = { projectId : this.projectId, userId: this.selectedUserId};
 
-    this.taskService.getTasksByMonth(data).subscribe({
+    this.taskService.getTasksByMonth(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("res > ", JSON.stringify(data));
-        
         if(data.success) {
           this.taskService.showloading(false);
           this.tasksByMonth = data.result;
@@ -245,7 +232,6 @@ export class AnalyticsComponent implements OnInit {
               backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#81C784'],
             }]
           };
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.taskService.showloading(false);
           this.taskService.showAlertMessage('error', data.message || 'Error while fetching task', 3000);
@@ -264,67 +250,66 @@ export class AnalyticsComponent implements OnInit {
   }
 
   mergeAllTasks(): void {
-  const tasksSet = new Set<string>();
+    const tasksSet = new Set<string>();
 
-  const extractTasks = (grouped: any[]): any[] =>
-    grouped?.flatMap(group => group.tasks || []) || [];
+    const extractTasks = (grouped: any[]): any[] =>
+      grouped?.flatMap(group => group.tasks || []) || [];
 
-  const merged = [
-    ...extractTasks(this.tasksByStatus),
-    ...extractTasks(this.tasksByProgress),
-    ...extractTasks(this.tasksByPriority),
-    ...extractTasks(this.tasksByMonth)
-  ].filter(task => {
-    // avoid duplicates
-    if (!tasksSet.has(task._id)) {
-      tasksSet.add(task._id);
-      return true;
-    }
-    return false;
-  });
-
-  this.allTasks = merged;
-}
-
-generatePdf() {
-  const data = { projectId: this.projectId, userId: this.selectedUserId };
-
-  this.taskService.showloading(true);
-  this.taskService.generatePdf(data).subscribe({
-    next: (blob: Blob) => {
-      // Step 1: Check if the blob is really a PDF or an error JSON disguised as blob
-      if (blob.type === 'application/json') {
-        // Read JSON error blob
-        const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            const errorData = JSON.parse(reader.result as string);
-            this.taskService.showloading(false);
-          } catch (e) {
-            this.taskService.showloading(false);
-            this.taskService.showAlertMessage('error', 'Unexpected error occurred while reading error blob', 3000);
-          }
-        };
-        this.taskService.showloading(false);
-        reader.readAsText(blob);
-        return;
+    const merged = [
+      ...extractTasks(this.tasksByStatus),
+      ...extractTasks(this.tasksByProgress),
+      ...extractTasks(this.tasksByPriority),
+      ...extractTasks(this.tasksByMonth)
+    ].filter(task => {
+      if (!tasksSet.has(task._id)) {
+        tasksSet.add(task._id);
+        return true;
       }
+      return false;
+    });
 
-      // Step 2: Valid PDF - download
-      this.taskService.showloading(false);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'analytics_report.pdf';
-      link.click();
-      window.URL.revokeObjectURL(url);
-    },
-    error: (error) => {
-      this.taskService.showloading(false);
-      this.taskService.showAlertMessage('error', error.message || 'Error while generating PDF', 3000);
-    }
-  });
-}
+    this.allTasks = merged;
+  }
 
+  generatePdf() {
+    const data = { projectId: this.projectId, userId: this.selectedUserId };
+
+    this.taskService.showloading(true);
+    this.taskService.generatePdf(data).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (blob: Blob) => {
+        if (blob.type === 'application/json') {
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const errorData = JSON.parse(reader.result as string);
+              this.taskService.showloading(false);
+            } catch (e) {
+              this.taskService.showloading(false);
+              this.taskService.showAlertMessage('error', 'Unexpected error occurred while reading error blob', 3000);
+            }
+          };
+          this.taskService.showloading(false);
+          reader.readAsText(blob);
+          return;
+        }
+        this.taskService.showloading(false);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'analytics_report.pdf';
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        this.taskService.showloading(false);
+        this.taskService.showAlertMessage('error', error.message || 'Error while generating PDF', 3000);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }

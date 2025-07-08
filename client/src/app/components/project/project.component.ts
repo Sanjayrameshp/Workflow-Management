@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ViewChild, ElementRef} from '@angular/core';
+import { Component, OnInit, inject, ViewChild, ElementRef, OnDestroy} from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task/task.service';
@@ -9,6 +9,7 @@ import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.componen
 import { ChartData, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-project',
@@ -16,12 +17,13 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
   templateUrl: './project.component.html',
   styleUrl: './project.component.css'
 })
-export class ProjectComponent implements OnInit {
+export class ProjectComponent implements OnInit, OnDestroy {
 
   private taskService = inject(TaskService);
   private userService = inject(UserSevice);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
+  private destroy$ = new Subject<void>();
 
   @ViewChild('inviteClose') inviteClose!: ElementRef;
   @ViewChild('taskFormClose') taskFormClose!: ElementRef;
@@ -50,7 +52,6 @@ export class ProjectComponent implements OnInit {
   search = '';
   selectedStatus = '';
 
-  // Sorting
   sortBy = 'startDate';
   sortOrder: 'asc' | 'desc' = 'asc';
   statusOptions = ['started', 'inprogress', 'blocked', 'completed'];
@@ -83,7 +84,7 @@ export class ProjectComponent implements OnInit {
   },
   scales: {
     x: {
-      title: { display: true, text: 'User' }
+      title: { display: true, text: 'Users' }
     },
     y: {
       title: { display: true, text: 'Number of Tasks' },
@@ -96,14 +97,14 @@ export class ProjectComponent implements OnInit {
   ngOnInit(): void {
     this.minDate = new Date();
 
-    this.userService.getUserObject().subscribe({
+    this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
-          this.userService.getAuthStatus().subscribe({
+          this.userService.getAuthStatus().pipe(takeUntil(this.destroy$)).subscribe({
             next:(status) => {
               this.authStatus = status;
 
-              this.activatedRoute.paramMap.subscribe((params) => {
+              this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
                 this.projectId = params.get('projectid');
                 if(this.projectId) {
                   if(this.authStatus) {
@@ -148,22 +149,17 @@ export class ProjectComponent implements OnInit {
 
   getProjectDetails() {
     this.taskService.showloading(true);
-    this.taskService.getProjectDetails(this.projectId).subscribe({
+    this.taskService.getProjectDetails(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("pro <", JSON.stringify(data));
         if(data.success) {
-          this.project = data.project;
-          console.log("PROJECT >> ", this.project);
           this.breadCrumbItems = [
-            {label: 'Home', route: '/', icon: 'fa fa-home'},
-            {label: 'dashboard', route: '/dashboard'},
+            {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
             {label: this.project.name}
           ];
           
           this.setEditFormField(this.project);
           this.getTasks();
           this.taskService.showloading(false);
-          // this.taskService.showAlertMessage('success', data.message || 'invite successfully', 3000);
         } else {
           this.taskService.showloading(false);
           this.taskService.showAlertMessage('error', data.message || 'Error while fetching projects', 3000);
@@ -177,8 +173,6 @@ export class ProjectComponent implements OnInit {
   }
 
   setEditFormField(projectdata:any) {
-    console.log("PROJECT ET> ", JSON.stringify(projectdata));
-    
     this.editForm.patchValue({
       name: projectdata.name,
       description: projectdata.description,
@@ -189,7 +183,6 @@ export class ProjectComponent implements OnInit {
   }
 
   submitTaskForm() {
-    console.log("task > ", this.taskForm.value);
     const taskData = {
       title: this.taskForm.value.title,
       description: this.taskForm.value.description,
@@ -204,13 +197,14 @@ export class ProjectComponent implements OnInit {
 
     this.taskService.showloading(true);
 
-    this.taskService.createTask(taskData).subscribe({
+    this.taskService.createTask(taskData).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);
           this.taskService.showAlertMessage('success', data.message || 'Task created successfully', 3000);
           this.taskFormClose.nativeElement.click();
           this.getProjectDetails();
+          this.getProjectAnalytics();
           this.taskForm.reset();
         } else {
           this.getProjectDetails();
@@ -241,15 +235,11 @@ export class ProjectComponent implements OnInit {
       projectId: this.projectId,
       status : this.selectedStatus
     }
-
-    console.log("DATA >>> ", options);
-    
     this.taskService.showloading(true);
 
-    this.taskService.getTasks(options).subscribe({
+    this.taskService.getTasks(options).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         this.taskService.showloading(false);
-        console.log("tasks > ", data);
         this.tasks = data.tasks;
         this.totalPages = data.meta.totalPages;
         this.totalTasks = data.meta.total;
@@ -264,12 +254,10 @@ export class ProjectComponent implements OnInit {
   }
 
   searchTasks() {
-    console.log("serarck q-> ", this.search);
     clearTimeout(this.taskSearchDebounce)
     this.taskSearchDebounce = setTimeout(()=> {
       this.getTasks();
-    }, 500)
-    
+    }, 300)
   }
 
   onPageChange(event: any): void {
@@ -279,10 +267,8 @@ export class ProjectComponent implements OnInit {
   }
 
   getUsersList() {
-    this.userService.getUsersByProject(this.projectId).subscribe({
+    this.userService.getUsersByProject(this.projectId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(users:any) => {
-        console.log("USERS LIST > ", users);
-        
         if(users.success) {
           this.usersList = users.users;
           if (this.usersList.length > 0) {
@@ -304,10 +290,8 @@ export class ProjectComponent implements OnInit {
         projectId: this.projectId
       }
       this.userSearchDebounce = setTimeout(()=> {
-        this.userService.searchUserByProject(data).subscribe({
+        this.userService.searchUserByProject(data).pipe(takeUntil(this.destroy$)).subscribe({
           next:(data:any) => {
-            console.log("data > ", data);
-            
           if(data.success) {
             this.filteredUsers = data.users;
           } else {
@@ -318,7 +302,7 @@ export class ProjectComponent implements OnInit {
           this.filteredUsers = [];
         }
         })
-      }) 
+      }, 300) 
     } else {
       this.filteredUsers = [];
     }
@@ -338,7 +322,7 @@ export class ProjectComponent implements OnInit {
         projectId: this.projectId,
         org: this.selectedUser.organization
       }
-      this.taskService.addUserToProject(data).subscribe({
+      this.taskService.addUserToProject(data).pipe(takeUntil(this.destroy$)).subscribe({
         next:(data:any) => {
           if(data.success) {
             this.taskService.showloading(false);
@@ -373,7 +357,7 @@ export class ProjectComponent implements OnInit {
       projectId : this.projectId
     }
 
-    this.taskService.updateProject(data).subscribe({
+    this.taskService.updateProject(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.taskService.showloading(false);
@@ -409,10 +393,8 @@ export class ProjectComponent implements OnInit {
     let data = {
       projectId : this.projectId
     }
-    this.taskService.projectTasksByStatus(data).subscribe({
+    this.taskService.projectTasksByStatus(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        
-        console.log("SATAUS > ", JSON.stringify(data));
         if(data.success) {
           this.taskService.showloading(false);
           this.tasksByStatus = data.result?.result || [];
@@ -441,9 +423,8 @@ export class ProjectComponent implements OnInit {
     let data = {
       projectId : this.projectId
     }
-    this.taskService.projectTasksByProgress(data).subscribe({
+    this.taskService.projectTasksByProgress(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("PROGRESS > ", JSON.stringify(data));
         if(data.success) {
           this.taskService.showloading(false);
           this.tasksByProgress = data.result?.result || [];
@@ -470,9 +451,8 @@ export class ProjectComponent implements OnInit {
     let data = {
       projectId : this.projectId
     }
-    this.taskService.projectTasksByPriority(data).subscribe({
+    this.taskService.projectTasksByPriority(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("PRIORITY > ", data);
         if(data.success) {
           this.taskService.showloading(false);
           this.tasksByPriority = data.result?.result || [];
@@ -500,9 +480,8 @@ export class ProjectComponent implements OnInit {
     let data = {
       projectId : this.projectId
     }
-    this.taskService.groupTasksByAssignedUser(data).subscribe({
+    this.taskService.groupTasksByAssignedUser(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("USERS DATA > ", JSON.stringify(data));
         if(data.success) {
           this.taskService.showloading(false);
           this.tasksByUser = data.result?.result || [];
@@ -528,6 +507,9 @@ export class ProjectComponent implements OnInit {
     })
   }
 
-
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }

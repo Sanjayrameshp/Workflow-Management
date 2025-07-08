@@ -1,5 +1,5 @@
 import { Component,inject, OnInit } from '@angular/core';
-import { FormGroup, FormControl, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule, Validators, AbstractControl, FormArray } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserRole } from '../../common/interfaces/user-role.interface';
@@ -30,8 +30,10 @@ export class RegisterAdminComponent implements OnInit {
       {label: 'Register Account'}
     ];
 
-     this.otpForm = new FormGroup({
-      otp: new FormControl(null, Validators.required)
+    this.otpForm = new FormGroup({
+      otp: new FormArray(
+        Array.from({ length: 6 }, () => new FormControl('', [Validators.required]))
+      )
     });
 
     this.adminRegForm = new FormGroup({
@@ -76,6 +78,29 @@ export class RegisterAdminComponent implements OnInit {
 
   get passwordControl() {
     return this.adminRegForm.get('password');
+  }
+
+  get otpControls() {
+    return (this.otpForm.get('otp') as FormArray).controls;
+  }
+
+  onInput(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    if (value.length === 1 && index < 5) {
+      const nextInput = input.parentElement?.children[index + 1] as HTMLInputElement;
+      nextInput?.focus();
+    }
+  }
+
+  onKeyDown(index: number, event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+
+    if (event.key === 'Backspace' && !input.value && index > 0) {
+      const prevInput = input.parentElement?.children[index - 1] as HTMLInputElement;
+      prevInput?.focus();
+    }
   }
 
   sendSignupOTP() {
@@ -123,7 +148,7 @@ export class RegisterAdminComponent implements OnInit {
       role : this.role
     }
 
-    let otp = this.otpForm.value.otp;
+    const otp = (this.otpForm.get('otp') as FormArray).value.join(''); 
     this.taskService.showloading(true);
 
     this.userService.signUpOrgAndAdmin(orgData, userData, otp).subscribe({

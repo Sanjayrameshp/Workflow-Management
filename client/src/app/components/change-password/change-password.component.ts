@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy  } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -6,6 +6,7 @@ import { UserRole } from '../../common/interfaces/user-role.interface';
 import { UserSevice } from '../../services/user/user-sevice.service';
 import { TaskService } from '../../services/task/task.service';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-change-password',
@@ -13,12 +14,14 @@ import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.componen
   templateUrl: './change-password.component.html',
   styleUrl: './change-password.component.css'
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent implements OnInit, OnDestroy {
 
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private userService = inject(UserSevice);
   private taskService = inject(TaskService);
+  private destroy$ = new Subject<void>();
+
   breadCrumbItems : any[] = [];
   userObject: any;
   authStatus: boolean = false;
@@ -34,12 +37,11 @@ export class ChangePasswordComponent implements OnInit {
     }, { validators: this.passwordMatchValidator });
     
     this.breadCrumbItems = [
-      {label: 'Home', route: '/', icon: 'fa fa-home'},
-      {label: 'dashboard', route: '/dashboard'},
+      {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
       {label: 'Change Password'}
     ];
 
-    this.userService.getUserObject().subscribe({
+    this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
           this.userService.getAuthStatus().subscribe({
@@ -95,14 +97,12 @@ export class ChangePasswordComponent implements OnInit {
 
   changePassword() {
     if(!this.changePasswordForm.valid) return;
-    console.log("pass-data > ", this.changePasswordForm.value);
     let data = this.changePasswordForm.value;
     this.taskService.showloading(true);
 
-    this.userService.changePassword(data).subscribe({
+    this.userService.changePassword(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
-          console.log("changed pass <", data);
           this.taskService.showloading(false);
           this.taskService.showAlertMessage('success', data.message || 'Password changed successfully', 3000);
         } else {
@@ -116,8 +116,11 @@ export class ChangePasswordComponent implements OnInit {
         this.taskService.showAlertMessage('error', error.message || 'Unable to update password', 3000);
       }
     })
-    
+  }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }
