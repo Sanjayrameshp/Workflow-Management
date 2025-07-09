@@ -5,3 +5,10 @@
 body {
   font-family: 'Baloo 2', sans-serif;
 }
+
+.invalid-feedback {
+  color: rgb(245, 135, 135) !important;
+}
+.feedback-text-success {
+  color: #28f394 !important;
+}

@@ -36,10 +36,6 @@ input.form-control:focus {
   color: rgb(162, 22, 22);
 }
 
-.feedback-text-success {
-  color: #055932;
-}
-
 .submit-btn {
   color: #584ecb;
   background-color: #ffffff;

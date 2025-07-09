@@ -99,6 +99,8 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     if(!this.changePasswordForm.valid) return;
     let data = this.changePasswordForm.value;
     this.taskService.showloading(true);
+    console.log("DATA > ", data);
+    
 
     this.userService.changePassword(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {

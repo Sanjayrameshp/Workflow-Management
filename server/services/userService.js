@@ -177,7 +177,7 @@ var getUserDetails = async function(userData) {
 var changePassword = async function(passwordData, userData) {
     try {
 
-        const user = await User.findOne({ _id: new mongoose.Types.ObjectId(userData._id), email: passwordData.email});
+        const user = await User.findOne({ _id: new mongoose.Types.ObjectId(userData._id), email: userData.email});
 
         if (!user) {
             return { success: false, message: 'User not found' };
