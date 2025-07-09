@@ -26,7 +26,7 @@ router.post('/createTask', AdminAuth ,async (req, res) => {
         return res.send({ success: false, message : error.message || 'Error while creating new task' })
     }
     
-});
+}); 
 
 router.get('/getTasks', userAuth ,async (req, res) => {
     try {
