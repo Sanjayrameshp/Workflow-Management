@@ -66,11 +66,11 @@
               <input id="password" type="password" formControlName="password" class="form-control" [ngClass]="{'is-invalid': isInvalid('password')}"/>
               <div *ngIf="isInvalid('password', 'required')" class="invalid-feedback">Password is required</div>
               <small [ngClass]="{
-                'text-danger': isInvalid('password', 'minlength') && passwordControl?.dirty,
+                'invalid-feedback': isInvalid('password', 'minlength') && passwordControl?.dirty,
                 'feedback-text-success': isPasswordValid('password', 'minlength') && passwordControl?.dirty
               }" class="d-block mt-1">Must be at least 6 characters</small>
               <small [ngClass]="{
-                'text-danger': isInvalid('password', 'weakPassword') && passwordControl?.dirty,
+                'invalid-feedback': isInvalid('password', 'weakPassword') && passwordControl?.dirty,
                 'feedback-text-success': isPasswordValid('password', 'weakPassword') && passwordControl?.dirty
               }" class="d-block">Include uppercase, lowercase, number, and symbol (&#64;, #, $, *)</small>
             </div>
