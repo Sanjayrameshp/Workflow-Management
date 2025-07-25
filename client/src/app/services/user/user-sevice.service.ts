@@ -104,8 +104,8 @@ export class UserSevice {
     return this.http.post(expressapi.submitForgotPassword, {userData,otp});
   }
 
-  getUsersByAdmin() {
-    return this.http.get(expressapi.getUsersByAdmin);
+  getUsersByAdmin(projectId:any) {
+    return this.http.post(expressapi.getUsersByAdmin, projectId);
   }
 
   getUserDetailsForAdmin(userId:any) {

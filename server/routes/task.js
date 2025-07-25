@@ -1,12 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken')
+const multer = require('multer');
+const csv = require('csv-parser');
+const path = require('path');
+const fs = require('fs');
 
 const userAuth = require('../middlewares/auth');
 const AdminAuth = require('../middlewares/adminAuth');
 const projectService = require('../services/projectService');
 const taskService = require('../services/taskService');
+const adminAuth = require('../middlewares/adminAuth');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+})
+const upload = multer({ storage: storage });
 
 router.post('/createTask', AdminAuth ,async (req, res) => {
     try {
@@ -35,8 +48,6 @@ router.get('/getTasks', userAuth ,async (req, res) => {
         
         if(!user)  return res.send({success: false, message : 'Authorization failed'});
         const getTasks = await taskService.getTasks(req.query, user);
-
-        console.log("FETCh TASK > ", getTasks);
         
         if( getTasks.success) {
            return res.send({success: true, message : getTasks.message || 'Tasks fetched successfully', tasks : getTasks.data, meta : getTasks.meta})
@@ -202,5 +213,46 @@ router.post('/generatePdf', userAuth, async (req, res) => {
     res.send({ success: false, message: error.message });
   }
 });
+
+router.post('/uploadTasksFromCSV', upload.single('file'), adminAuth ,async (req, res) => {
+    try {
+        
+        if(!req.user) {
+            return res.send({success: false, message : 'Authentication failed'});
+        }
+        if(!req.file) {
+            return res.send({success: false, message : 'File not found'});
+        }
+
+        const projectId = req.body.projectId;
+
+        const file = req.file;
+
+        const parsedData = await parseCSV(file.path);
+        
+        const uploadtask = await taskService.uploadTasksFromCSV(parsedData, projectId, req.user);
+
+         fs.unlink(req.file.path, (err) => {
+            if (err) console.error('Error deleting file:', err);
+        });
+
+        res.send({success: true, response : uploadtask})
+
+    } catch (error) {
+        return res.send({ success: false, message : error.message || 'Error while uploading tasks', response : [] })
+    }
+    
+});
+
+function parseCSV(filePath) {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on('data', (row) => results.push(row))
+      .on('end', () => resolve(results))
+      .on('error', (err) => reject(err));
+  });
+}
 
 module.exports = router;

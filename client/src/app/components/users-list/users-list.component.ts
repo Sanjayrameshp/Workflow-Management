@@ -2,7 +2,7 @@ import { Component, OnInit, inject, OnDestroy} from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task/task.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserSevice } from '../../services/user/user-sevice.service';
 import { BreadcrumbComponent } from "../../common/breadcrumb/breadcrumb.component";
 import { Subject, takeUntil } from 'rxjs';
@@ -18,41 +18,54 @@ export class UsersListComponent implements OnInit, OnDestroy {
   private taskService = inject(TaskService);
   private userService = inject(UserSevice);
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute)
   private destroy$ = new Subject<void>();
 
   userObject : any;
   authStatus: boolean = false;
   usersList: any[]= [];
   breadCrumbItems : any[] = [];
+  projectId : any = null;
 
   ngOnInit(): void {
     this.breadCrumbItems = [
       {label: 'Dashboard', route: '/dashboard', icon: 'fa fa-home'},
-      {label: 'Users List'}
     ];
-    this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
-        next:(user)=> {
-          this.userObject = user;
-          this.userService.getAuthStatus().pipe(takeUntil(this.destroy$)).subscribe({
-            next:(status) => {
-              this.authStatus = status;
-              if(this.authStatus) {
-                this.getUsersByAdmin();
+    this.activatedRoute.queryParams.subscribe(params => {
+    this.projectId = params['projectId'] ? params['projectId'] : null;
+    console.log("req-body > ", this.projectId);
+    if(this.projectId) {
+      this.breadCrumbItems.push({label: 'Project', route: '/project/' + this.projectId})
+    }
+    this.breadCrumbItems.push({label: 'Users list'})
+ 
+      this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
+          next:(user)=> {
+            this.userObject = user;
+            this.userService.getAuthStatus().pipe(takeUntil(this.destroy$)).subscribe({
+              next:(status) => {
+                this.authStatus = status;
+                if(this.authStatus) {
+                  this.getUsersByAdmin();
+                }
+              },error:(error)=> {
+                this.authStatus = false;
               }
-            },error:(error)=> {
-              this.authStatus = false;
-            }
-          })
-        },
-        error:(error)=> {
-          this.userObject = null;
-      }
+            })
+          },
+          error:(error)=> {
+            this.userObject = null;
+        }
+      });
     });
   }
 
   getUsersByAdmin() {
     this.taskService.showloading(true);
-    this.userService.getUsersByAdmin().pipe(takeUntil(this.destroy$)).subscribe({
+    let data = {
+      projectId :this.projectId
+    }
+    this.userService.getUsersByAdmin(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
           this.usersList = data.users;

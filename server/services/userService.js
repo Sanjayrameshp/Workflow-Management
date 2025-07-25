@@ -247,9 +247,16 @@ var forgotPassword = async function(userData, existUser) {
     }
 }
 
-var getUsersByAdmin = async function(userData) {
+var getUsersByAdmin = async function(userData, projectId) {
     try {
-        const users = await User.find({ adminRef: new mongoose.Types.ObjectId(userData._id), role: 'user'}).select('-password').populate('projects').populate('organization');
+        const query = {
+            adminRef: new mongoose.Types.ObjectId(userData._id),
+            role: 'user'
+        };
+        if (projectId) {
+            query.projects = { $in: [new mongoose.Types.ObjectId(projectId)] };
+        }
+        const users = await User.find(query).select('-password').populate('projects').populate('organization');
 
         return { success: true, message: 'Users fetched successfully', users }
     } catch (error) {

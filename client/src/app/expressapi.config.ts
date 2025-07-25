@@ -37,4 +37,5 @@ export const expressapi = {
   searchUserByProject: environment.apiUrl + '/user/searchUserByProject',
   addUserToProject: environment.apiUrl + '/project/addUserToProject',
   checkForMultipleOrgs: environment.apiUrl + '/user/checkForMultipleOrgs',
+  uploadTasksFromCSV: environment.apiUrl + '/task/uploadTasksFromCSV',
 };

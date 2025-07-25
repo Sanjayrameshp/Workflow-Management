@@ -426,6 +426,30 @@
   border: 2px solid white !important;
 }
 
+.clickhere {
+  cursor: pointer;
+  animation: cliskHighlight 1s infinite;
+  font-weight: bold;
+}
+
+@keyframes cliskHighlight {
+  0% {
+    color: #200ae4;
+  }
+  25% {
+    color: #0912b1;
+  }
+  50% {
+    color: #1f0d84;
+  }
+  75% {
+    color: #1d0bbb;
+  }
+  100% {
+    color: #4116dc;
+  }
+}
+
 @media (min-width : 600px) {
   .analytics-btn, .add-user-btn, .create-task-btn {
     margin-right: 8px;

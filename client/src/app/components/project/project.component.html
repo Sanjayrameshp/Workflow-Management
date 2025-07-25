@@ -5,9 +5,35 @@
     </div>
   <div class="row mb-3">
     <div class="col btn-section">
+        <button
+          type="button"
+          class="btn btn-primary create-task-btn"
+          *ngIf="userObject && userObject.role === 'admin'"
+          [routerLink]="['/users-list']" [queryParams]="{ projectId: projectId }"
+        >
+          <i class="bi bi-person-lines-fill"></i>
+          Users List
+        </button>
         <button class="btn btn-primary analytics-btn" [routerLink]="['/analytics', projectId]">
           <i class="fa-solid fa-chart-simple"></i>User Analytics
         </button>
+        <button
+            *ngIf="userObject && userObject.role === 'admin'"
+            class="btn btn-primary create-task-btn"
+            (click)="downloadSampleCSV()"
+          >
+            <i class="fa-solid fa-download"></i> Download template
+        </button>
+        <input
+          type="file"
+          id="csvUpload"
+          accept=".csv"
+          (change)="onFileSelected($event)"
+          style="display: none;"
+        />
+        <label for="csvUpload" class="btn btn-primary create-task-btn">
+          <i class="fa-solid fa-upload"></i> Upload Tasks
+        </label>
         <button
           *ngIf="userObject && userObject.role === 'admin'"
           class="btn btn-primary add-user-btn"
@@ -24,6 +50,30 @@
         >
           <i class="bi bi-plus-circle me-1"></i> Create Task
         </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row" *ngIf="showSuccessDiv">
+    <div class="col-md-12">
+      <div class="alert alert-success position-relative mt-3">
+        <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2"
+                aria-label="Close" (click)="closeSuccessDiv()"></button>
+        <h5>Successfully Uploaded <strong>{{ successCsvData.length }}</strong> Tasks, Please <strong class="clickhere" (click)="downloadCSV('success.csv', successCsvData)">Click here</strong> to download.</h5>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="container">
+    <div class="row" *ngIf="showErrorDiv">
+      <div class="col-md-12">
+        <div class="alert alert-danger position-relative mt-3">
+          <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2"
+                  aria-label="Close" (click)="closeErrorDiv()"></button>
+          <h5>Errors Found While Uploading <strong>{{ errorCsvData.length }}</strong> Tasks, Please <strong class="clickhere" (click)="downloadCSV('error.csv', errorCsvData)">Click here</strong> to download.</h5>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -3,6 +3,8 @@ const User = require('../models/User');
 const Project = require('../models/Project')
 const mongoose = require('mongoose');
 const puppeteer = require('puppeteer');
+const csv = require('csv-parser');
+const fs = require('fs');
 
 var createTask = async function(taskData, user) {
     try {
@@ -427,6 +429,86 @@ var generatePdf = async function (data) {
   }
 };
 
+var uploadTasksFromCSV = async function(parsedFile, projectId, user) {
+  let errorFile = [];
+  let successFile = [];
+
+  for(let i=0; i<parsedFile.length; i++) {
+    const row = parsedFile[i];
+    const errors = [];
+
+    // Validate required fields
+    if (!row['Assign to']) errors.push('Assign To field is missing');
+    if (!row['Task']) errors.push('Task field is missing');
+    if (!row['Description']) errors.push('Description field is missing');
+    if (!row['Priority']) errors.push('Priority field is missing');
+    if (!row['Start date']) errors.push('Start date field is missing');
+    if (!row['End date']) errors.push('End date field is missing');
+    if (!row['Message']) errors.push('Message field is missing');
+
+    const fullName = row['Assign to'];
+    const [firstName, ...rest] = fullName.split(' ');
+    const lastName = rest.join(' ');
+
+    const query = {
+      firstname: { $regex: new RegExp(`^${firstName}$`, 'i') },
+      lastname: { $regex: new RegExp(`^${lastName}$`, 'i') }
+    };
+
+    const userFound = await User.findOne(query);
+    console.log("USER found > ", userFound);
+    if(!userFound) {
+      errors.push('User not found');
+    }
+    if(userFound) {
+      const taskName = await Task.findOne({title: row['Task'], assignedTo: userFound._id})
+      if(taskName) {
+        errors.push('This task is already assigned to this user');
+      }
+    }
+
+    if (errors.length > 0) {
+      errorFile.push({
+        ...row,
+        error: errors.join(', ')
+      });
+      continue;
+    }
+
+    try {
+      const newTask = new Task({
+        title: row['Task'],
+        description: row['Description'],
+        status: 'started',
+        priority: row['Priority'],
+        endDate: parseDate(row['End date']),
+        startDate: parseDate(row['Start date']),
+        customMessage: row['Message'],
+        project: projectId,
+        assignedTo: userFound._id,
+        createdBy: user._id,
+      });
+
+      await newTask.save();
+
+      successFile.push(row);
+
+    } catch (err) {
+      errorFile.push({
+        ...row,
+        error: `DB Save Error: ${err.message}`
+      });
+    }
+  }
+  return { successFile, errorFile };
+}
+
+function parseDate(dateStr) {
+  if (!dateStr) return null;
+  const [day, month, year] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 
 module.exports.createTask = createTask;
 module.exports.getTasks = getTasks;
@@ -437,3 +519,4 @@ module.exports.groupTasksByProgress = groupTasksByProgress;
 module.exports.groupTasksByPriority = groupTasksByPriority;
 module.exports.groupTasksByMonth = groupTasksByMonth;
 module.exports.generatePdf = generatePdf;
+module.exports.uploadTasksFromCSV = uploadTasksFromCSV;

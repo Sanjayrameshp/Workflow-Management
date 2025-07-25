@@ -90,9 +90,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
       title: { display: true, text: 'Number of Tasks' },
       beginAtZero: true
     }
-  }
-};
-
+    }
+  };
+  selectedFile: File | null = null;
+  successCsvData: any[] = [];
+  errorCsvData: any[] = [];
+  showSuccessDiv = false;
+  showErrorDiv = false;
 
   ngOnInit(): void {
     this.minDate = new Date();
@@ -515,6 +519,104 @@ export class ProjectComponent implements OnInit, OnDestroy {
       }
     })
   }
+
+  downloadSampleCSV(): void {
+    const headers = 'Assign to,Task,Description,Priority,Start date,End date,Message\n';
+
+    const sampleData = [
+      'User email address,Task name,Task description,High | Medium | Low,2025-07-15 (dd-mm-yyyy),2025-07-20 (dd-mm-yyyy), your custom message,  Please remove this line when uploading,'
+    ];
+
+    const csvContent = headers + sampleData.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'sample.csv';
+    anchor.click();
+
+    window.URL.revokeObjectURL(url);
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      this.uploadCSV();
+    }
+  }
+
+  uploadCSV(): void {
+    if (!this.selectedFile) return;
+    console.log("SELECTED FILE > ", this.selectedFile);
+
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+    formData.append('projectId', this.projectId.toString());
+
+    this.taskService.showloading(true);
+    this.taskService.uploadTasksFromCSV(formData).subscribe({
+      next:(data:any) => {
+        this.taskService.showloading(false);
+        console.log(JSON.stringify(data));
+        this.successCsvData = data.response.successFile || [];
+        this.errorCsvData = data.response.errorFile || [];
+
+        this.showSuccessDiv = this.successCsvData.length > 0;
+        this.showErrorDiv = this.errorCsvData.length > 0;
+        this.getProjectDetails();
+        this.getProjectAnalytics();
+
+      },
+      error:(error)=> {
+        this.taskService.showloading(false);
+        this.taskService.showAlertMessage('success', 'Something went wrong', 3000);
+        this.getProjectDetails();
+        this.getProjectAnalytics();
+      }
+    })
+  }
+
+  convertToCSV(data: any[]): string {
+    if (!data || data.length === 0) return '';
+
+    const headers = Object.keys(data[0]);
+    const csvRows = [];
+
+    // Add headers
+    csvRows.push(headers.join(','));
+
+    // Add rows
+    data.forEach(row => {
+      const values = headers.map(header => `"${row[header] ?? ''}"`);
+      csvRows.push(values.join(','));
+    });
+
+    return csvRows.join('\n');
+  }
+
+  downloadCSV(filename: string, data: any[]): void {
+    const csvData = this.convertToCSV(data);
+    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  }
+
+  closeSuccessDiv(): void {
+    this.showSuccessDiv = false;
+  }
+
+  closeErrorDiv(): void {
+    this.showErrorDiv = false;
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next();

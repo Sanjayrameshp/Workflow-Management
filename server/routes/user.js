@@ -342,15 +342,18 @@ router.post('/submitForgotPassword' ,async (req, res) => {
     
 });
 
-router.get('/getUsersByAdmin', adminAuth ,async (req, res) => {
+router.post('/getUsersByAdmin', adminAuth ,async (req, res) => {
     try {
 
         const user = req.user;
+        console.log("req.body", req.body);
+        
+        const projectId = req.body.projectId ? req.body.projectId : null;
         if(!user && user.role !== 'admin') {
             return res.send({ success: false, message: 'Authorization failed' })
         }
 
-        const getUsersByAdmin = await userService.getUsersByAdmin(user);
+        const getUsersByAdmin = await userService.getUsersByAdmin(user, projectId);
 
         return res.send({ success: true, message: getUsersByAdmin.message || 'Users fetched successfully', users : getUsersByAdmin.users });
     } catch (error) {

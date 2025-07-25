@@ -82,11 +82,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
-          console.log("header-user > ", this.userObject);
+          console.log("this.userObject > ", JSON.stringify(this.userObject));
           
           this.userService.getAuthStatus().subscribe({
             next:(status) => {
               this.authStatus = status;
+              console.log("this.authStatus > ", JSON.stringify(this.authStatus));
+              
               if(this.authStatus) {
                 this.fetchProjects();
               }

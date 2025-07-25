@@ -104,6 +104,10 @@ export class TaskService {
     return this.http.post(expressapi.addUserToProject, data);
   }
 
+  uploadTasksFromCSV(formData :any) {
+    return this.http.post(expressapi.uploadTasksFromCSV, formData);
+  }
+
   showAlertMessage(type:Alert['severity'], message: string, duration: number) {
     const messageModel = {
       severity: type,
