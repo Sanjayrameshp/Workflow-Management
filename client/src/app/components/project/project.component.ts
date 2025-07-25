@@ -559,7 +559,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.taskService.uploadTasksFromCSV(formData).subscribe({
       next:(data:any) => {
         this.taskService.showloading(false);
-        console.log("response > ",JSON.stringify(data));
         this.successCsvData = data.response.successFile || [];
         this.errorCsvData = data.response.errorFile || [];
 

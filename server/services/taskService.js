@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const puppeteer = require('puppeteer');
 const csv = require('csv-parser');
 const fs = require('fs');
+const pdf = require('html-pdf-node');
 
 var createTask = async function(taskData, user) {
     try {
@@ -152,10 +153,7 @@ var groupTasksByStatus = async function(data) {
                                             }
                                         },
                                         { $sort: { _id: 1 } }
-                                    ])
-
-                                    console.log("group > ", groupByStatus);
-                                    
+                                    ])                                   
 
         return { success: true, message:'Successfully fetched the tasks by status', result : groupByStatus }
     
@@ -415,12 +413,11 @@ var generatePdf = async function (data) {
       </body>
     </html>`;
 
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-
-    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-    await browser.close();
+    const file = { content: html };
+    const pdfBuffer = await pdf.generatePdf(file, {
+      format: 'A4',
+      printBackground: true
+    });
 
     return pdfBuffer;
 
