@@ -456,7 +456,6 @@ var uploadTasksFromCSV = async function(parsedFile, projectId, user) {
     };
 
     const userFound = await User.findOne(query);
-    console.log("USER found > ", userFound);
     if(!userFound) {
       errors.push('User not found');
     }

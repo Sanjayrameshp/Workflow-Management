@@ -4,6 +4,7 @@ const multer = require('multer');
 const csv = require('csv-parser');
 const path = require('path');
 const fs = require('fs');
+const { Readable } = require('stream');
 
 const userAuth = require('../middlewares/auth');
 const AdminAuth = require('../middlewares/adminAuth');
@@ -11,15 +12,15 @@ const projectService = require('../services/projectService');
 const taskService = require('../services/taskService');
 const adminAuth = require('../middlewares/adminAuth');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-})
-const upload = multer({ storage: storage });
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'uploads/');
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, Date.now() + path.extname(file.originalname));
+//     }
+// })
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/createTask', AdminAuth ,async (req, res) => {
     try {
@@ -225,16 +226,11 @@ router.post('/uploadTasksFromCSV', upload.single('file'), adminAuth ,async (req,
         }
 
         const projectId = req.body.projectId;
+        const buffer = req.file.buffer;
 
-        const file = req.file;
-
-        const parsedData = await parseCSV(file.path);
+        const parsedData = await parseCSV(buffer);
         
         const uploadtask = await taskService.uploadTasksFromCSV(parsedData, projectId, req.user);
-
-         fs.unlink(req.file.path, (err) => {
-            if (err) console.error('Error deleting file:', err);
-        });
 
         res.send({success: true, response : uploadtask})
 
@@ -244,10 +240,12 @@ router.post('/uploadTasksFromCSV', upload.single('file'), adminAuth ,async (req,
     
 });
 
-function parseCSV(filePath) {
+function parseCSV(buffer) {
   return new Promise((resolve, reject) => {
     const results = [];
-    fs.createReadStream(filePath)
+    const stream = Readable.from(buffer.toString());
+
+    stream
       .pipe(csv())
       .on('data', (row) => results.push(row))
       .on('end', () => resolve(results))
