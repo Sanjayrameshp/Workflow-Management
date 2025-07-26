@@ -82,12 +82,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
-          console.log("this.userObject > ", JSON.stringify(this.userObject));
           
           this.userService.getAuthStatus().subscribe({
             next:(status) => {
               this.authStatus = status;
-              console.log("this.authStatus > ", JSON.stringify(this.authStatus));
               
               if(this.authStatus) {
                 this.fetchProjects();
@@ -104,8 +102,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   fetchProjects() {
-    console.log("inside");
-    
     let options = {
       page: this.currentPage,
       limit: this.limit,
@@ -114,14 +110,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       sortOrder: this.sortOrder,
       status: this.selectedStatus
     }
-    console.log("options >", options);
     
     this.taskService.showloading(true);
 
     this.taskService.getProjects(options).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         this.taskService.showloading(false);
-        console.log("projects > ", JSON.stringify(data));
         this.projects = data.projects;
         this.totalPages = data.meta.totalPages;
         this.totalProjects = data.meta.total;
@@ -166,7 +160,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   inviteUser() {
-    console.log("user invite > ", this.inviteForm.value);
     if(!this.inviteForm.valid) return;
 
     this.taskService.showloading(true);

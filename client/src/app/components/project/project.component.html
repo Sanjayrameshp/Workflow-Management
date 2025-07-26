@@ -4,7 +4,7 @@
       <app-breadcrumb [items]="breadCrumbItems"></app-breadcrumb>
     </div>
   <div class="row mb-3">
-    <div class="col btn-section">
+    <div class="col-md-12 btn-section d-flex flex-wrap gap-2">
         <button
           type="button"
           class="btn btn-primary create-task-btn"
@@ -566,7 +566,6 @@
                 [showIcon]="true"
                 inputId="endDate"
                 [showOnFocus]="false"
-                [minDate]="minDate"
                 dateFormat="dd-mm-yy"
                 styleClass="w-100"
               ></p-calendar>
