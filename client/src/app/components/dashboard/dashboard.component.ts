@@ -110,11 +110,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       sortOrder: this.sortOrder,
       status: this.selectedStatus
     }
+    console.log("opt > ", JSON.stringify(options));
+    
     
     this.taskService.showloading(true);
 
     this.taskService.getProjects(options).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
+        console.log("PROJECT > ", JSON.stringify(data));
+        
         this.taskService.showloading(false);
         this.projects = data.projects;
         this.totalPages = data.meta.totalPages;
@@ -241,7 +245,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     this.taskService.updateProject(data).pipe(takeUntil(this.destroy$)).subscribe({
-      next:(data:any) => {
+      next:(data:any) => { 
         if(data.success) {
           this.taskService.showloading(false);
           this.taskService.showAlertMessage('success', data.message || 'Project updated successfully', 3000);

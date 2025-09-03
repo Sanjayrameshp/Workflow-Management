@@ -59,7 +59,7 @@ var getProjects = async function(options, user) {
             _id: { $in: userData.projects }
         };
         if (search) {
-            filter.name = { $regex: search, $options: 'i' }; // case-insensitive
+            filter.name = { $regex: search, $options: 'i' };
         }
         if (status) {
             filter.status = status;

@@ -189,7 +189,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   submitTaskForm() {
-    console.log("task > ", this.taskForm.value);
     const taskData = {
       title: this.taskForm.value.title,
       description: this.taskForm.value.description,

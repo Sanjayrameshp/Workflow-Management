@@ -178,7 +178,7 @@ async function sendWelcomeEmail(toMail, subject) {
                     </ul>
                   </p>
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://your-app-link.com" target="_blank" style="background-color: #673ab7; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+                    <a href="https://workflow-management-lilac.vercel.app" target="_blank" style="background-color: #673ab7; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px;">
                       Get Started
                     </a>
                   </div>
