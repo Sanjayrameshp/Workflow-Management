@@ -116,7 +116,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       this.taskService.showAlertMessage('info', 'You have no authorization to delete this user', 3000);
       return;
     }
-
+    this.taskService.showloading(false);
     this.userService.deleteUser(this.userId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {

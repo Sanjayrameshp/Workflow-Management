@@ -30,7 +30,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   projects: any = [];
   userObject : any;
   authStatus : any;
-  // statusOptions = ['Active','On Hold', 'Cancelled', 'Completed'];
   currentPage:number = 1;
   limit: number = 10;
   totalPages: number = 0;
@@ -43,7 +42,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   sortBy = 'createdAt';
   sortOrder: 'asc' | 'desc' = 'asc';
 
-  // statusOptions = ['active', 'cancelled', 'onhold', 'completed'];
   statusOptions = [{label: 'Active', value: 'active'}, {label: 'Cancelled', value: 'cancelled'}, {label: 'On Hold', value: 'onhold'}, {label: 'Completed', value: 'completed'}]
   
   editForm!: FormGroup;
@@ -110,15 +108,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       sortOrder: this.sortOrder,
       status: this.selectedStatus
     }
-    console.log("opt > ", JSON.stringify(options));
-    
-    
-    this.taskService.showloading(true);
 
+    this.taskService.showloading(true);
     this.taskService.getProjects(options).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
-        console.log("PROJECT > ", JSON.stringify(data));
-        
         this.taskService.showloading(false);
         this.projects = data.projects;
         this.totalPages = data.meta.totalPages;
@@ -128,7 +121,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.projects = [];
         this.taskService.showloading(false);
         this.taskService.showAlertMessage('success', error.message || 'Failed to fetch projects', 3000);
-        
       }
     })
   }
@@ -137,12 +129,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!this.projectForm.valid) return;
 
     const projectData = this.projectForm.value;
-    console.log("projectData, ", projectData);
     this.taskService.showloading(true);
     this.taskService.createProject(projectData).pipe(takeUntil(this.destroy$)).subscribe({
       next:(data:any) => {
         if(data.success) {
-          this.taskService.showloading(false);
           this.taskService.showAlertMessage('success', data.message || 'Project created successfully', 3000);
           this.closeBtn.nativeElement.click();
           this.projectForm.reset();
@@ -188,7 +178,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.inviteForm.reset();
       }
     })
-    
   }
 
   onPageChange(event: any): void {
@@ -217,61 +206,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.searchDebounceTimer = setTimeout(()=> {
       this.fetchProjects();
-    }, 500)
+    }, 400)
   }
 
   onStatusFilterChange(): void {
     this.currentPage = 1;
     this.fetchProjects();
-  }
-
-  editProject(project: any) {
-    this.selectedProjectId = project._id;
-    this.editForm.patchValue({
-      name: project.name,
-      description: project.description,
-      startDate: project.startDate?.substring(0, 10),
-      endDate: project.endDate?.substring(0, 10),
-      status: project.status
-    });
-  }
-
-  submitUpdateForm() {
-    let data = {
-      description : this.editForm.value.description,
-      endDate : this.editForm.value.endDate,
-      status : this.editForm.value.status,
-      projectId : this.selectedProjectId
-    }
-
-    this.taskService.updateProject(data).pipe(takeUntil(this.destroy$)).subscribe({
-      next:(data:any) => { 
-        if(data.success) {
-          this.taskService.showloading(false);
-          this.taskService.showAlertMessage('success', data.message || 'Project updated successfully', 3000);
-          this.editModalCloseBtn.nativeElement.click();
-          this.editForm.reset();
-          this.fetchProjects();
-        } else {
-          this.taskService.showloading(false);
-          this.taskService.showAlertMessage('error', data.message || 'Error while updating project', 3000);
-          this.editModalCloseBtn.nativeElement.click();
-          this.editForm.reset();
-        }
-      },
-      error:(error) => {
-        this.taskService.showloading(false);
-        this.taskService.showAlertMessage('error', error.message || 'Error while updating project', 3000);
-        this.editModalCloseBtn.nativeElement.click();
-        this.editForm.reset(); 
-      }
-    })
-
-
-  }
-
-  deleteProject(projectId: string) {
-    
   }
 
   ngOnDestroy(): void {

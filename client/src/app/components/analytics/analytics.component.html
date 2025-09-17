@@ -5,8 +5,8 @@
    <div class="row" *ngIf="userObject && userObject.role === 'admin'">
     <div class="col-md-6 mb-3">
       <label class="form-label" style="color: #000000">User Name</label>
-      <select  class="form-select" [(ngModel)]="selectedUserId">
-        <option *ngFor="let user of selectedUsersList" [value]="user._id" (click)="getAllTasksByUser()">{{user.firstname}}&nbsp;{{user.lastname}}&nbsp;({{user.email}})</option>
+      <select  class="form-select" (change)="changeSelectedUser($event)">
+        <option *ngFor="let user of selectedUsersList" [value]="user._id">{{user.firstname}}&nbsp;{{user.lastname}}&nbsp;({{user.email}})</option>
       </select>
     </div>
     <div class="col-md-6 mb-3 pdf-btn">

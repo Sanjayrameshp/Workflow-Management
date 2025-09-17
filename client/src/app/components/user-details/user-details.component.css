@@ -40,17 +40,13 @@
 }
 
 #confirmDeleteUserModal .modal-header {
-  background: linear-gradient(120deg, #ef4444, #f97316, #fb923c);
-  color: white;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  background-color: #f16666;
+  color: #ffffff;
 }
 
 #confirmRemoveProjectModal .modal-header {
-  background: linear-gradient(120deg, #facc15, #fbbf24, #fcd34d);
-  color: #1f2937;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  background-color: #f16666;
+  color: #ffffff;
 }
 
 .modal-confirm .modal-title {
@@ -72,8 +68,7 @@
   padding: 1rem 1.5rem;
 }
 
-.modal-confirm .btn-danger,
-.modal-confirm .btn-warning {
+.modal-confirm .btn-danger {
   border-radius: 8px;
   border: none;
   color: white;
@@ -82,20 +77,7 @@
 }
 
 .modal-confirm .btn-danger {
-  background: linear-gradient(120deg, #ef4444, #f97316, #fb923c);
-}
-
-.modal-confirm .btn-danger:hover {
-  background: linear-gradient(120deg, #dc2626, #ea580c, #f97316);
-}
-
-.modal-confirm .btn-warning {
-  background: linear-gradient(120deg, #facc15, #fbbf24, #fcd34d);
-  color: #1f2937;
-}
-
-.modal-confirm .btn-warning:hover {
-  background: linear-gradient(120deg, #eab308, #f59e0b, #fbbf24);
+  background-color: #f16666;
 }
 
 .modal-confirm .btn-secondary {

@@ -118,6 +118,13 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
     })
   }
 
+  changeSelectedUser(event:Event) {
+    this.selectedUserId = (event.target as HTMLSelectElement).value;
+    if(this.selectedUserId) {
+      this.getAllTasksByUser()
+    }
+  }
+
   getAllTasksByUser() {
     this.getTasksByStatus();
     this.getTasksByProgress();
