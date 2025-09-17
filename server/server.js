@@ -24,7 +24,9 @@ mongoose.connect(process.env.MONGO_URI, {
   console.log(error);
 })
 
-
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'server running' });
+});
 app.use('/expressapi/user', userRoute);
 app.use('/expressapi/project', projectRoute);
 app.use('/expressapi/task', taskRoute);
