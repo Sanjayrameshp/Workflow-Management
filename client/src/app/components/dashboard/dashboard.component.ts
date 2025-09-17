@@ -81,7 +81,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next:(user)=> {
           this.userObject = user;
           
-          this.userService.getAuthStatus().subscribe({
+          this.userService.getAuthStatus().pipe(takeUntil(this.destroy$)).subscribe({
             next:(status) => {
               this.authStatus = status;
               
@@ -100,6 +100,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   fetchProjects() {
+    console.log("kkkkkaaaaa");
+    
     let options = {
       page: this.currentPage,
       limit: this.limit,

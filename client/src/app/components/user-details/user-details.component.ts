@@ -39,7 +39,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         next:(user)=> {
           this.loggedUser = user;
           
-          this.userService.getAuthStatus().subscribe({
+          this.userService.getAuthStatus().pipe(takeUntil(this.destroy$)).subscribe({
             next:(status) => {
               this.authStatus = status;
               this.activatedRoute.paramMap.subscribe((params) => {

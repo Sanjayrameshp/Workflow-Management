@@ -49,28 +49,31 @@ export class UserSevice {
   }
 
   getUserObject(): Observable<any> {
-  const token = localStorage.getItem('jw_token');
-  if (!token) {
-    this.currentUserSubject.next(null);
-    return of(null);
-  }
-  return this.http.post(expressapi.getUser, { token }).pipe(
-    tap((res: any) => {
-      if (res.success) {
-        this.authStatus.next(true);
-        this.userRole.next(res.user.role);
-        this.currentUserSubject.next(res.user);
-      } else {
-        this.currentUserSubject.next(null);
-      }
-    }),
-    map((res: any) => res.success ? res.user : null),
-    catchError(() => {
+    if (this.currentUserSubject.value) {
+      return of(this.currentUserSubject);
+    }
+    const token = localStorage.getItem('jw_token');
+    if (!token) {
       this.currentUserSubject.next(null);
       return of(null);
-    })
-  );
- }
+    }
+    return this.http.post(expressapi.getUser, { token }).pipe(
+      tap((res: any) => {
+        if (res.success) {
+          this.authStatus.next(true);
+          this.userRole.next(res.user.role);
+          this.currentUserSubject.next(res.user);
+        } else {
+          this.currentUserSubject.next(null);
+        }
+      }),
+      map((res: any) => res.success ? res.user : null),
+      catchError(() => {
+        this.currentUserSubject.next(null);
+        return of(null);
+      })
+    );
+  }
 
  inviteUser(data: {email: string}) {
   return this.http.post(expressapi.inviteUser,data)
