@@ -30,8 +30,9 @@
           accept=".csv"
           (change)="onFileSelected($event)"
           style="display: none;"
+          *ngIf="userObject && userObject.role === 'admin'"
         />
-        <label for="csvUpload" class="btn btn-primary create-task-btn">
+        <label for="csvUpload" class="btn btn-primary create-task-btn" *ngIf="userObject && userObject.role === 'admin'">
           <i class="fa-solid fa-upload"></i> Upload Tasks
         </label>
         <button

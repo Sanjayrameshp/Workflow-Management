@@ -50,7 +50,7 @@ export class UserSevice {
 
   getUserObject(): Observable<any> {
     if (this.currentUserSubject.value) {
-      return of(this.currentUserSubject);
+      return of(this.currentUserSubject.value);
     }
     const token = localStorage.getItem('jw_token');
     if (!token) {

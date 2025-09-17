@@ -58,6 +58,8 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
         this.userService.getUserObject().pipe(takeUntil(this.destroy$)).subscribe({
         next:(user)=> {
           this.userObject = user;
+          console.log(this.userObject);
+          
           this.userService.getAuthStatus().pipe(takeUntil(this.destroy$)).subscribe({
             next:(status) => {
               this.authStatus = status;
