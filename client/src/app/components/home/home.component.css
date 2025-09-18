@@ -1,90 +1,184 @@
-.banner-section {
-  position: relative;
-  background: linear-gradient(120deg, #3b82f6, #a855f7);
-  padding-top: 60px;
-  min-height: 100vh;
+/* Hero Section */
+.hero-section {
+  min-height: 80vh;
+  background-color: #5959e1; /* primary blue */
+  color: white;
   display: flex;
   align-items: center;
+  padding: 100px 0;
 }
-
-.text-brand {
-  color: #facc15;
+.hero-section h1 {
+  color: #f8f9fd;
+  font-weight: 700;
 }
-
-.btn-glow {
-  background: #facc15;
-  color: #000;
-  font-weight: bold;
-  border: none;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+.hero-section h1 span {
+  color: #ffd54f; /* highlight "Quantivio" */
 }
-.btn-glow:hover {
-  background: #fde68a;
-  box-shadow: 0 0 20px rgba(250, 204, 21, 0.9);
-  color: #000;
+.hero-section p {
+  color: #f8f9fa;
 }
-
-.banner-img {
+.hero-img,
+.hero-video {
   max-width: 90%;
-  height: auto;
+  border-radius: 1rem;
 }
 
-.svg-wave {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  line-height: 0;
-  z-index: 1;
+/* Hero Buttons */
+.reg-button {
+  background-color: #ffd54f;
+  color: #212529;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
-.svg-wave svg {
-  display: block;
-  width: 100%;
-  height: 100px;
+.reg-button:hover {
+  background-color: #ffca28;
+  transform: translateY(-2px);
 }
 
+.login-btn {
+  background-color: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.login-btn:hover {
+  background-color: #fff;
+  color: #5959e1;
+  transform: translateY(-2px);
+}
+
+.dash-btn {
+  background-color: #4cafef;
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.dash-btn:hover {
+  background-color: #2196f3;
+  transform: translateY(-2px);
+}
+
+/* Features Section Overlay */
 .features-section {
-  background: #fff;
+  margin-top: -80px; /* overlay on banner */
+}
+.features-section .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+}
+.features-section .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
 }
 .feature-icon {
-  height: 80px;
-  margin-top: 10px;
+  max-width: 80px;
+  height: auto;
+}
+.features-section h5 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+.features-section p {
+  font-size: 0.95rem;
+  color: #666;
 }
 
-.info-grid-section {
-  background: linear-gradient(135deg, #f0f4ff, #e8edff);
-  position: relative;
-  z-index: 1;
+/* About Section (blue background) */
+.bg-blue {
+  background-color: #5959e1;
 }
-.max-70 {
-  max-height: 70px;
-  width: auto;
+.about-section h2 {
+  color: #fff;
+  font-size: 2rem;
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.about-section p {
+  color: #e3e3ff;
+  max-width: 700px;
+  margin: 0 auto;
 }
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+.about-section .btn {
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
 }
-
-.fade-in {
-  opacity: 0;
-  animation: fadeIn 1s ease forwards;
-}
-.slide-up {
-  opacity: 0;
-  animation: slideUp 1s ease forwards;
+.about-section .btn:hover {
+  background-color: #ffd54f;
+  color: #212529;
+  border-color: #ffd54f;
 }
 
-.delay-1 {
-  animation-delay: 0.3s;
+
+/* Grid Section */
+.grid-section {
+  background: #f9fafe;
 }
-.delay-2 {
-  animation-delay: 0.6s;
+.grid-section h2 {
+  color: #333;
 }
-.delay-3 {
-  animation-delay: 0.9s;
+.grid-card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  text-align: center;
+  transition: all 0.3s ease;
 }
+.grid-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+.grid-icon {
+  font-size: 2rem;
+  color: #5959e1;
+}
+
+/* Testimonial Section */
+/* Testimonial Carousel Section */
+.testimonial-section {
+  background-color: #f0f4ff;
+}
+
+.testimonial-section h2 {
+  color: #333;
+}
+
+.testimonial-section p {
+  color: #666;
+}
+
+.testimonial-card {
+  background-color: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  min-height: 250px;
+  max-height: 250px;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.testimonial-card i {
+  margin-bottom: 1rem;
+  color: #5959e1;
+}
+
+.testimonial-card h6 {
+  margin-top: 0.5rem;
+}
+
+.testimonial-card small {
+  color: #999;
+}
+
