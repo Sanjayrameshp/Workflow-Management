@@ -3,13 +3,13 @@ const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  service: 'smtp.gmail.com',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   service: 'smtp.gmail.com',
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
 
 
 async function sendOtp(toMail,otp, subject, message) {
@@ -142,13 +142,20 @@ async function sendInviteMail(toMail, subject, registerUrl) {
     `;
 
   const mailOptions = {
-    from: `"Invitation" <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_USER,
     to: toMail,
     subject: subject,
     html: htmlContent
   };
 
-  return transporter.sendMail(mailOptions);
+  try {
+    await sgMail.send(mailOptions);
+    console.log('Email sent successfully to', toMail);
+  } catch (error) {
+    console.error('Email send failed:', error.response ? error.response.body : error.message);
+  }
+
+  // return transporter.sendMail(mailOptions);
 }
 
 async function sendWelcomeEmail(toMail, subject) {
@@ -215,7 +222,13 @@ async function sendWelcomeEmail(toMail, subject) {
     html: htmlContent
   };
 
-  return transporter.sendMail(mailOptions);
+  try {
+    await sgMail.send(mailOptions);
+    console.log('Email sent successfully to', toMail);
+  } catch (error) {
+    console.error('Email send failed:', error.response ? error.response.body : error.message);
+  }
+  // return transporter.sendMail(mailOptions);
 }
 
 async function sendProjectCreationEmail(project, user, subject) {
@@ -294,7 +307,13 @@ async function sendProjectCreationEmail(project, user, subject) {
     html: htmlContent
   };
 
-  return transporter.sendMail(mailOptions);
+  try {
+    await sgMail.send(mailOptions);
+    console.log('Email sent successfully to', toMail);
+  } catch (error) {
+    console.error('Email send failed:', error.response ? error.response.body : error.message);
+  }
+  // return transporter.sendMail(mailOptions);
 }
 
 module.exports.sendOtp = sendOtp;
