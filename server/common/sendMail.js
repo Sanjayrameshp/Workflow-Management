@@ -1,12 +1,16 @@
 const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: 'smtp.gmail.com',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 });
+
 
 async function sendOtp(toMail,otp, subject, message) {
 
@@ -57,14 +61,19 @@ async function sendOtp(toMail,otp, subject, message) {
   `;
   
   const mailOptions = {
-    from: `"Verification" <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_USER,
     to : toMail,
     subject: subject,
-    text: message,
     html: htmlContent,
   };
+  try {
+    await sgMail.send(mailOptions);
+    console.log('Email sent successfully to', toMail);
+  } catch (error) {
+    console.error('Email send failed:', error.response ? error.response.body : error.message);
+  }
 
-  return transporter.sendMail(mailOptions);
+  // return transporter.sendMail(mailOptions);
 }
 
 async function sendInviteMail(toMail, subject, registerUrl) {
